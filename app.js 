@@ -1,0 +1,62 @@
+// app.js — Inicialización ligera del header/tema/idioma y “enhance” del logo.
+// No toca tu router ni las vistas que ya manejas en main.js.
+
+(() => {
+  const THEME_KEY = "zpeaku_theme";
+  const LANG_KEY  = "zpeaku_lang";
+
+  function $(sel, root=document){ return root.querySelector(sel); }
+
+  function initTheme() {
+    const saved = localStorage.getItem(THEME_KEY) || "dark";
+    document.body.setAttribute("data-theme", saved);
+    const btn = $("#btnTheme");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        const now = document.body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.body.setAttribute("data-theme", now);
+        localStorage.setItem(THEME_KEY, now);
+      });
+    }
+  }
+
+  function initLang() {
+    const sel = $("#langSel");
+    if (!sel) return;
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && (saved === "es" || saved === "en")) sel.value = saved;
+    sel.addEventListener("change", () => {
+      localStorage.setItem(LANG_KEY, sel.value);
+      // Si tu main.js ya hace i18n, aquí no recargamos ni re-renderizamos.
+      // Solo persistimos la preferencia para que main.js la lea.
+    });
+  }
+
+  function enhanceBrand() {
+    const img = $("#brandLogo");
+    if (!img) return;
+
+    // Asegura carga correcta y tamaño proporcional
+    img.addEventListener("error", () => {
+      console.warn("No se pudo cargar el logo PNG: assets/logo-zpeaku-1.png");
+    });
+
+    // Evita estirar el logo si el usuario hace zoom o cambia el tamaño del header
+    const setSize = () => {
+      const header = document.querySelector(".site-header");
+      if (!header) return;
+      // Mantener el logo ligeramente menor a la altura del header
+      const h = Math.max(28, Math.min(36, header.clientHeight - 12));
+      img.style.height = `${h}px`;
+      img.style.width = "auto";
+    };
+    setSize();
+    window.addEventListener("resize", setSize);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+    initLang();
+    enhanceBrand();
+  });
+})();

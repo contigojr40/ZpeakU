@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ZpeakU</title>
+  <meta name="color-scheme" content="dark light" />
+  <link rel="icon" type="image/svg+xml" href="assets/brand-mark.svg" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body data-theme="dark">
+  <header class="site-header">
+    <a href="#/home" class="brand" aria-label="ZpeakU">
+      <img src="assets/brand-mark.svg" alt="ZpeakU" class="brand-logo" />
+      <span class="brand-name">ZpeakU</span>
+    </a>
+
+    <nav id="mainNav" class="main-nav">
+      <a href="#/home"    data-i18n="nav.home">Inicio</a>
+      <a href="#/stream"  data-i18n="nav.stream">Transmisión</a>
+      <a href="#/fans"    data-i18n="nav.fans">Fans</a>
+      <a href="#/creator" data-i18n="nav.creator">Creador</a>
+      <a href="#/support" data-i18n="nav.support">Soporte</a>
+    </nav>
+
+    <div class="actions">
+      <button id="btnTheme" class="ghost" title="Tema">🌓</button>
+      <select id="langSel" title="Language" aria-label="Language">
+        <option value="es">ES</option>
+        <option value="en">EN</option>
+      </select>
+      <a class="pill" href="#/fans" data-i18n="nav.login">Iniciar sesión</a>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- HOME -->
+    <section id="view-home" class="view">
+      <div class="card hero center">
+        <h1 data-i18n="hero.title">✨ Bienvenidos a ZpeakU</h1>
+        <p class="muted" data-i18n="hero.subtitle">La plataforma puente entre Fans y Creadores</p>
+        <div class="row wrap gap">
+          <a href="#/fans"    class="pill primary" data-i18n="hero.fan">🔔 Suscribirme como Fan</a>
+          <a href="#/creator" class="pill outline" data-i18n="hero.creator">🧰 Suscribirme como Creador</a>
+        </div>
+      </div>
+
+      <!-- Feeds verticales (tipo TikTok) -->
+      <div class="feeds grid two">
+        <!-- SHORTS -->
+        <section class="feed">
+          <header class="feed-head">
+            <h3 data-i18n="home.shorts">Shorts gratis de la comunidad</h3>
+          </header>
+          <div id="shortsFeed" class="feed-list scroll-snap-y"></div>
+        </section>
+
+        <!-- VIDEOS (mezcla: videos + playlists + lives + eventos públicos) -->
+        <section class="feed">
+          <header class="feed-head">
+            <h3 data-i18n="home.videos">Videos públicos de la comunidad</h3>
+          </header>
+          <div id="videosFeed" class="feed-list scroll-snap-y"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- FANS -->
+    <section id="view-fans" class="view hidden">
+      <div class="card">
+        <h2 data-i18n="fan.title">Acceso de Fan</h2>
+        <p class="muted" data-i18n="fan.subtitle">
+          Verifica tu email con un código OTP. Tu cuenta es gratis; puedes desbloquear contenidos cuando quieras.
+        </p>
+
+        <div id="fanStepEmail" class="stack">
+          <input id="fanEmail" class="mono" inputmode="email" autocomplete="email" placeholder="email@correo.com" />
+          <button id="btnFanSendOtp" class="pill primary" data-i18n="fan.send">Enviar código al email</button>
+          <span id="fanOtpHint" class="tiny muted"></span>
+        </div>
+
+        <div id="fanStepOtp" class="stack hidden">
+          <label class="tiny muted" data-i18n="fan.codeLabel">Código OTP de 6 dígitos</label>
+          <input id="fanOtp" class="mono" inputmode="numeric" maxlength="6" placeholder="••••••" />
+          <div class="row gap">
+            <button id="btnFanVerifyOtp" class="pill primary" data-i18n="fan.verify">Verificar</button>
+            <button id="btnFanResendOtp" class="pill outline" data-i18n="fan.resend">Reenviar</button>
+          </div>
+        </div>
+
+        <div id="fanHub" class="stack hidden">
+          <div class="row gap wrap">
+            <span data-i18n="fan.logged">Conectado como:</span>
+            <span id="fanBadge" class="badge"></span>
+            <button id="btnFanLogout" class="pill outline" data-i18n="fan.logout">Salir</button>
+          </div>
+
+          <div class="card inner">
+            <div class="row wrap gap">
+              <strong>All-Access</strong>
+              <span id="aaPriceTag" class="chip"></span>
+              <button id="btnUnlockAll" class="pill" data-i18n="fan.unlockAll">Desbloquear todo</button>
+              <span id="aaStatus" class="tiny muted"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CREATOR -->
+    <section id="view-creator" class="view hidden">
+      <h1 data-i18n="creator.title">Cuenta de Creador</h1>
+
+      <!-- OTP -->
+      <div id="creatorStepEmail" class="card">
+        <h3 data-i18n="creator.login">Login Creador</h3>
+        <div class="row wrap gap">
+          <input id="creatorEmail" placeholder="email@tu-dominio.com" />
+          <button id="btnCreatorSendOtp" class="pill" data-i18n="creator.send">Enviar código al email</button>
+          <span id="creatorOtpHint" class="tiny muted"></span>
+        </div>
+      </div>
+
+      <div id="creatorStepOtp" class="card hidden">
+        <h3 data-i18n="creator.verifyTitle">Verificación</h3>
+        <div class="row gap">
+          <input id="creatorOtp" class="mono" maxlength="6" placeholder="OTP de 6 dígitos" />
+          <button id="btnCreatorVerifyOtp" class="pill primary" data-i18n="creator.verify">Verificar</button>
+          <button id="btnCreatorResendOtp" class="pill outline" data-i18n="creator.resend">Reenviar</button>
+        </div>
+      </div>
+
+      <!-- Panel del creador -->
+      <div id="creatorPanel" class="card hidden">
+        <div class="grid two">
+          <div class="card inner">
+            <h3>All-Access</h3>
+            <div class="row gap wrap">
+              <label class="stack">
+                <span class="tiny muted" data-i18n="creator.monthly">Precio mensual (USD)</span>
+                <input id="allAccessPrice" type="number" min="0" step="1" value="100" />
+              </label>
+              <button id="btnSaveAA" class="pill primary" data-i18n="creator.saveAA">Guardar All-Access</button>
+            </div>
+          </div>
+
+          <div class="card inner">
+            <h3 data-i18n="creator.donations">Donaciones</h3>
+            <div class="stack">
+              <input id="donPayPal"  placeholder="https://paypal.me/tu_link" />
+              <input id="donCashApp" placeholder="https://cash.app/$usuario" />
+              <input id="donVenmo"   placeholder="https://venmo.com/u/usuario" />
+              <input id="donZelle"   placeholder="Correo o teléfono Zelle" />
+              <input id="donCustom"  placeholder="https://tu-enlace-personal.com" />
+              <button id="btnSaveDonations" class="pill" data-i18n="creator.saveDon">Guardar métodos de donación</button>
+              <span id="donSaved" class="tiny muted"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agregar contenido -->
+        <div class="section-card">
+          <div class="section-head"><h3>Shorts</h3><span class="chip">Free/Público</span></div>
+          <div class="row wrap gap">
+            <input id="shortTitle" placeholder="Título (igual a YouTube)" />
+            <input id="shortUrl"   placeholder="https://youtu.be/VIDEO_ID o https://youtube.com/shorts/ID" />
+            <input id="shortTags"  placeholder="etiquetas: comedia, música…" />
+            <label class="row gap"><input id="shortFront" type="checkbox" /> <span data-i18n="creator.front">Mostrar en portada</span></label>
+            <button id="btnAddShort" class="pill primary" data-i18n="creator.addShort">Agregar Short</button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head"><h3>Videos / Playlists / Lives / Eventos</h3></div>
+          <div class="row wrap gap">
+            <input id="videoTitle" placeholder="Título" />
+            <input id="videoUrl"   placeholder="https://youtu.be/ID o https://youtube.com/playlist?list=..." />
+            <input id="videoPrice" type="number" min="0" step="1" placeholder="Precio USD (0 = público)" />
+            <select id="videoBilling"><option value="monthly">Mensual</option><option value="one_time">Pago único</option></select>
+            <button id="btnAddVideo" class="pill primary" data-i18n="creator.addVideo">Agregar</button>
+          </div>
+        </div>
+
+        <!-- Mis publicaciones -->
+        <div class="section-card">
+          <div class="section-head"><h3>🗂️ Mis publicaciones</h3></div>
+          <div class="tabs">
+            <button class="tab active" data-tab="pub-shorts">Shorts</button>
+            <button class="tab" data-tab="pub-videos">Videos</button>
+            <button class="tab" data-tab="pub-playlists">Playlists</button>
+            <button class="tab" data-tab="pub-lives">Lives</button>
+            <button class="tab" data-tab="pub-specials">Eventos</button>
+          </div>
+          <div id="pub-shorts"    class="pub-pane"></div>
+          <div id="pub-videos"    class="pub-pane hidden"></div>
+          <div id="pub-playlists" class="pub-pane hidden"></div>
+          <div id="pub-lives"     class="pub-pane hidden"></div>
+          <div id="pub-specials"  class="pub-pane hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STREAM (placeholder) -->
+    <section id="view-stream" class="view hidden">
+      <h1 data-i18n="nav.stream">Transmisión</h1>
+      <div class="grid two">
+        <div class="card video-surface"></div>
+        <aside class="card chat-surface"></aside>
+      </div>
+    </section>
+
+    <!-- SOPORTE -->
+    <section id="view-support" class="view hidden">
+      <h1 data-i18n="support.title">Soporte</h1>
+      <p  data-i18n="support.text">Escríbenos si necesitas ayuda con tu cuenta o transmisión.</p>
+      <ul>
+        <li>Email: soporte@zpeaku.com</li>
+        <li>Twitter: @zpeaku</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2025 ZpeakU</span>
+    <nav class="links">
+      <a href="#/support" data-i18n="footer.support">Soporte</a>
+      <a href="/legal/terms"   target="_blank" data-i18n="footer.terms">Términos</a>
+      <a href="/legal/privacy" target="_blank" data-i18n="footer.privacy">Privacidad</a>
+      <a href="/legal/dmca"    target="_blank">DMCA</a>
+    </nav>
+  </footer>
+
+  <!-- Modal Player -->
+  <div id="playerModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-body card">
+      <div class="row wrap gap space-between">
+        <strong id="pmTitle"></strong>
+        <button id="pmClose" class="pill outline tiny-btn" data-i18n="modal.close">Cerrar</button>
+      </div>
+      <div class="player-wrap">
+        <iframe id="ytFrame" title="YouTube player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+          allowfullscreen></iframe>
+      </div>
+      <div class="row wrap gap space-between mt8">
+        <div id="pmTags" class="tiny muted"></div>
+      </div>
+      <div class="row wrap gap mt8">
+        <button id="pmDonate" class="pill" data-i18n="donate.btn">❤️ Donar al creador</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Donar -->
+  <div id="donateModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-body card">
+      <div class="row wrap gap space-between">
+        <strong data-i18n="donate.title">Elige un método de donación</strong>
+        <button id="donClose" class="pill outline tiny-btn" data-i18n="modal.close">Cerrar</button>
+      </div>
+      <div id="donLinks" class="stack mt8"></div>
+      <p class="tiny muted" data-i18n="donate.note">El pago va directo al creador (fuera de ZpeakU).</p>
+    </div>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    window.SUPABASE_URL  = "https://TU-PROJECT-URL.supabase.co";
+    window.SUPABASE_ANON_KEY = "TU-ANON-KEY";
+  </script>
+  <script src="./main.js"></script>
+</body>
+</html>

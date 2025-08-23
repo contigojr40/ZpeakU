@@ -1,0 +1,153 @@
+:root{
+  --bg:#0f0f13; --bg-2:#15151c; --text:#e7e7ea; --muted:#9aa0a6;
+  --primary:#7b2cff; --primary-2:#b855ff; --border:#262633; --danger:#ff4d4f;
+}
+[data-theme="light"]{
+  --bg:#ffffff; --bg-2:#f6f7f9; --text:#111; --muted:#555;
+  --primary:#7b2cff; --primary-2:#b855ff; --border:#e4e6eb; --danger:#d9363e;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:var(--bg); color:var(--text);
+}
+
+/* ---------- HEADER ---------- */
+.site-header{
+  position:sticky; top:0; z-index:10;
+  display:flex; align-items:center; gap:16px;
+  padding:12px 20px; border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0)) , var(--bg);
+  backdrop-filter:saturate(140%) blur(6px);
+}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none}
+.brand-logo{height:28px; width:auto; display:block}
+.brand-name{font-weight:600; opacity:.9}
+@media (min-width:900px){ .brand-logo{height:32px} }
+.main-nav{display:flex; gap:18px; margin-left:8px}
+.main-nav a{ color:var(--text); opacity:.9; text-decoration:none; padding:6px 0; transition:.2s transform}
+.main-nav a:hover{opacity:1; transform:translateY(-1px)}
+.main-nav a.active{border-bottom:2px solid var(--primary)}
+.actions{margin-left:auto; display:flex; align-items:center; gap:10px}
+
+/* ---------- BOTONES / CHIPS ---------- */
+.ghost{background:transparent; border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:8px; cursor:pointer}
+.pill{
+  background:var(--bg-2); color:var(--text); padding:8px 14px; border-radius:999px; text-decoration:none;
+  display:inline-flex; align-items:center; border:1px solid var(--border); cursor:pointer;
+  transition: box-shadow .2s ease, transform .2s ease, background .2s ease;
+}
+.pill:hover{box-shadow:0 8px 24px rgba(0,0,0,.28); transform:translateY(-1px)}
+.pill.primary{background:linear-gradient(135deg,var(--primary),var(--primary-2)); border-color:transparent}
+.pill.outline{background:transparent; border:1px solid var(--border)}
+.pill.danger{border-color:var(--danger); color:var(--danger)}
+.tiny-btn{font-size:.85rem; padding:5px 10px}
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  border:1px solid var(--border); border-radius:999px;
+  padding:4px 10px; font-size:.85rem; background:rgba(255,255,255,.06)
+}
+
+/* ---------- LAYOUT ---------- */
+#app{max-width:1100px; margin:24px auto; padding:0 16px}
+.grid.two{display:grid; grid-template-columns:1fr; gap:16px}
+@media (min-width:1000px){ .grid.two{grid-template-columns:1fr 1fr} }
+.card{ background:var(--bg-2); border:1px solid var(--border); border-radius:14px; padding:18px; }
+.card.inner{background:rgba(0,0,0,.15)}
+.hero{padding:22px;background:linear-gradient(135deg,rgba(123,44,255,.18),rgba(184,85,255,.08))}
+.hero.center{text-align:center}
+.row{display:flex; align-items:center}
+.wrap{flex-wrap:wrap}
+.space-between{justify-content:space-between}
+.gap{gap:10px}
+.stack{display:flex; flex-direction:column; gap:10px}
+.mt8{margin-top:8px}
+.hidden{display:none}
+
+input, select{
+  background:var(--bg); color:var(--text); border:1px solid var(--border);
+  padding:8px 10px; border-radius:10px
+}
+input.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace}
+.muted{color:var(--muted)}
+.tiny{font-size:.875rem}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace}
+.badge{background:rgba(123,44,255,.18); border:1px solid var(--border); border-radius:999px; padding:6px 10px}
+.tag{font-size:.75rem; padding:2px 8px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.06)}
+.list{list-style:none; margin:0; padding:0}
+.list li{padding:8px 0; border-bottom:1px dashed var(--border)}
+.list li:last-child{border-bottom:none}
+
+/* ---------- SECCIONES ---------- */
+.section-card{ background:var(--bg-2); border:1px dashed var(--border); border-radius:14px; padding:16px; margin-top:14px}
+.section-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
+
+/* ---------- FEEDS (estilo TikTok vertical) ---------- */
+.feeds{display:grid; grid-template-columns:1fr; gap:20px}
+@media (min-width:1000px){ .feeds{grid-template-columns:1fr 1fr} }
+
+.feed{display:flex; flex-direction:column; gap:12px}
+.feed-head{display:flex; align-items:center; justify-content:space-between}
+.feed-list{
+  display:flex; flex-direction:column; gap:16px;
+  max-height:78vh; overflow-y:auto; scroll-snap-type:y mandatory; padding-right:6px;
+  border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.03)
+}
+.feed-list::-webkit-scrollbar{width:6px}
+.feed-list::-webkit-scrollbar-thumb{background:var(--border); border-radius:3px}
+
+.feed-card, .feed-item{
+  border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#0c0c12; scroll-snap-align:start;
+  position:relative;
+}
+
+/* Miniatura y overlay de play */
+.thumb{position:relative}
+.thumb img, .feed-thumb, .short-thumb{width:100%; display:block; object-fit:cover; aspect-ratio:9/16; background:#1b1b25; cursor:pointer}
+.play-overlay, .play{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;
+}
+.play .dot, .play-btn, .play .btn{
+  width:58px; height:58px; border-radius:50%; background:rgba(0,0,0,.45);
+  display:flex; align-items:center; justify-content:center; backdrop-filter:blur(2px);
+}
+.play .dot::before, .play-btn::before{
+  content:""; display:block; width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent; border-left:16px solid #fff; margin-left:4px;
+}
+.click-area{position:absolute; inset:0; background:transparent; border:0; cursor:pointer}
+
+/* Meta de la tarjeta */
+.meta, .short-meta, .feed-meta{padding:10px; display:flex; flex-direction:column; gap:6px}
+.meta .title, .short-meta .title, .feed-meta .title{font-weight:600; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.meta .sub, .short-meta .sub, .feed-meta .sub{display:flex; justify-content:space-between; align-items:center}
+.meta .tags, .short-meta .tags, .feed-meta .tags{font-size:.75rem; color:var(--muted)}
+.meta .views, .short-meta .views, .feed-meta .views{font-size:.75rem; color:var(--muted)}
+.meta .actions, .short-meta .cta, .feed-meta .cta{display:flex; gap:8px}
+
+/* ---------- TABS (Mis publicaciones) ---------- */
+.tabs{display:flex; gap:8px; margin-bottom:10px}
+.tab{border:1px solid var(--border); background:transparent; color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer}
+.tab.active{background:rgba(255,255,255,.06)}
+.pub-pane .empty{color:var(--muted); font-size:.9rem}
+
+/* ---------- PLACEHOLDERS STREAM ---------- */
+.video-surface{height:320px; background:repeating-linear-gradient(45deg,#1e1e28,#1e1e28 10px,#222232 10px,#222232 20px); border-radius:10px}
+.chat-surface{height:320px}
+
+/* ---------- MODALES ---------- */
+.modal{position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center}
+.modal.hidden{display:none}
+.modal .modal-body{width:min(980px, 96vw)}
+.player-wrap{position:relative; width:100%; padding-top:56.25%}
+.player-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+
+/* ---------- FOOTER ---------- */
+.site-footer{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:14px; padding:24px 20px; border-top:1px solid var(--border); color:var(--muted)
+}
+.site-footer .links{display:flex; gap:14px}
+.site-footer a{color:var(--muted); text-decoration:none}
+.site-footer a:hover{color:var(--text)}
