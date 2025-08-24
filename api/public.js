@@ -1,20 +1,18 @@
-// api/videos-public.js
-import { listPublicVideos } from './_store.js';
-
+// api/public.js
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+    res.status(405).json({ error: 'Use GET' });
+    return;
   }
-  try {
-    // Solo devuelve los que están public=true y status='approved'
-    const items = listPublicVideos();
 
-    // cache rápido
-    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=300');
+  // Aquí devuelves los videos pendientes o públicos según la query
+  const { status } = req.query;
 
-    return res.json({ ok: true, items });
-  } catch (err) {
-    console.error('videos-public error', err);
-    return res.status(500).json({ ok: false, error: 'error interno' });
-  }
+  // Esto es un mock, luego se conecta a DB
+  const videos = [
+    { id: 1, title: 'Video de prueba', url: 'https://example.com/video1', status: 'pending' },
+    { id: 2, title: 'Otro video', url: 'https://example.com/video2', status: 'approved' },
+  ];
+
+  res.status(200).json({ items: videos.filter(v => !status || v.status === status) });
 }
