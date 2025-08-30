@@ -1,14 +1,6 @@
 {
+  "version": 2,
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    }
-  ],
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "outputDirectory": "."
+    { "source": "/", "destination": "/index.html" }
+  ]
 }
