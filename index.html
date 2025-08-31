@@ -5,26 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ZpeakU</title>
   <meta name="color-scheme" content="dark light" />
-
-  <!-- Favicon / Logo -->
-  <link rel="icon" type="image/svg+xml" href="assets/brand-mark.svg" />
-
-  <!-- CSS principal -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="/assets/brand-mark.svg" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 
 <body data-theme="dark">
   <header class="site-header">
     <a href="#/home" class="brand" aria-label="ZpeakU">
-      <img src="assets/brand-mark.svg" alt="ZpeakU" class="brand-logo" />
+      <img src="/assets/brand-mark.svg" alt="ZpeakU" class="brand-logo" />
       <span class="brand-name">ZpeakU</span>
     </a>
 
     <nav id="mainNav" class="main-nav">
-      <a href="#/home" data-i18n="nav.home">Inicio</a>
-      <a href="#/fans" data-i18n="nav.fans">Fans</a>
-      <a href="#/creator" data-i18n="nav.creator">Creador</a>
-      <a href="#/support" data-i18n="nav.support">Soporte</a>
+      <a href="#/home">Inicio</a>
+      <a href="#/fans">Fans</a>
+      <a href="#/creator">Creador</a>
+      <a id="btnSupport" href="#/support">Soporte</a>
     </nav>
 
     <div class="actions">
@@ -33,7 +29,7 @@
         <option value="es">ES</option>
         <option value="en">EN</option>
       </select>
-      <a class="pill" href="#/fans" data-i18n="nav.login">Iniciar sesión</a>
+      <a id="btnLogin" class="pill" href="#/fans">Iniciar sesión</a>
     </div>
   </header>
 
@@ -41,45 +37,84 @@
     <!-- HOME -->
     <section id="view-home" class="view">
       <div class="card hero center">
-        <h1 data-i18n="hero.title">✨ Bienvenidos a ZpeakU</h1>
-        <p class="muted" data-i18n="hero.subtitle">La plataforma puente entre Fans y Creadores.</p>
+        <h1>✨ Bienvenidos a ZpeakU</h1>
+        <p class="muted">La plataforma puente entre <strong>Fans</strong> y <strong>Creadores</strong>.</p>
         <div class="row wrap gap">
-          <a href="#/fans" class="pill primary" data-i18n="hero.fan">🔔 Suscribirme como Fan</a>
-          <a href="#/creator" class="pill outline" data-i18n="hero.creator">🧰 Suscribirme como Creador</a>
+          <button id="btnFan" class="pill primary">🔔 Suscribirme como Fan</button>
+          <button id="btnCreator" class="pill outline">🧰 Suscribirme como Creador</button>
         </div>
+      </div>
+
+      <!-- Buscador de Shorts -->
+      <div class="card">
+        <div class="row wrap gap">
+          <input id="qShorts" placeholder="Busca Shorts por título o etiqueta (#música, comedia…)" />
+          <button id="btnSearchShorts" class="pill">Buscar</button>
+          <button id="btnClearShorts" class="pill outline">Limpiar</button>
+        </div>
+      </div>
+
+      <!-- Top de la semana -->
+      <div class="card" id="homeTop5Card">
+        <div class="row wrap gap space-between">
+          <h3>Top 5 de la semana (ZpeakU)</h3>
+          <span class="tiny muted">Basado en vistas dentro de esta plataforma</span>
+        </div>
+        <ol id="homeTop5" class="top-list"></ol>
+      </div>
+
+      <!-- Shorts gratis en portada -->
+      <div class="card">
+        <div class="row wrap gap space-between">
+          <h3>Shorts gratis de la comunidad</h3>
+          <span class="chip">YouTube</span>
+        </div>
+        <div id="homeShortsRail" class="shorts-rail"></div>
       </div>
     </section>
 
     <!-- FANS -->
     <section id="view-fans" class="view hidden">
-      <h2 data-i18n="fan.title">Acceso de Fan</h2>
-      <p class="muted" data-i18n="fan.subtitle">Aquí podrás acceder a contenido exclusivo como fan registrado.</p>
+      <div class="card">
+        <h2>Acceso de Fan</h2>
+        <p class="muted">Verifica tu email con un código OTP. Tu cuenta es gratis; puedes desbloquear contenidos cuando quieras.</p>
+        <p class="muted">⚠️ En construcción: pronto disponible el login real.</p>
+      </div>
     </section>
 
     <!-- CREATOR -->
     <section id="view-creator" class="view hidden">
-      <h2 data-i18n="creator.title">Panel de Creador</h2>
-      <p class="muted" data-i18n="creator.subtitle">Aquí los creadores gestionan sus contenidos y suscripciones.</p>
+      <h1>Cuenta de Creador</h1>
+      <div class="card">
+        <h3>Panel del Creador</h3>
+        <p class="muted">⚠️ En construcción: aquí conectarás Stripe, manejarás videos y suscripciones.</p>
+        <button id="btnCreatorConnect" class="pill outline">Conectar Stripe (onboarding)</button>
+      </div>
     </section>
 
     <!-- SOPORTE -->
     <section id="view-support" class="view hidden">
-      <h2 data-i18n="support.title">Soporte</h2>
-      <p class="muted" data-i18n="support.text">¿Tienes dudas o problemas? Escríbenos a soporte@zpeaku.com</p>
+      <h1>Soporte</h1>
+      <p>Escríbenos si necesitas ayuda con tu cuenta o transmisión.</p>
+      <ul>
+        <li>Email: soporte@zpeaku.com</li>
+        <li>Twitter: @zpeaku</li>
+      </ul>
     </section>
   </main>
 
   <footer class="site-footer">
     <span>© 2025 ZpeakU</span>
     <nav class="links">
-      <a href="#/support" data-i18n="footer.support">Soporte</a>
-      <a href="/legal/terms" target="_blank" data-i18n="footer.terms">Términos</a>
-      <a href="/legal/privacy" target="_blank" data-i18n="footer.privacy">Privacidad</a>
+      <a href="#/support">Soporte</a>
+      <a href="/legal/terms" target="_blank">Términos</a>
+      <a href="/legal/privacy" target="_blank">Privacidad</a>
       <a href="/legal/dmca" target="_blank">DMCA</a>
     </nav>
   </footer>
 
-  <!-- Script principal -->
-  <script src="main.js"></script>
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/main.js"></script>
 </body>
 </html>
