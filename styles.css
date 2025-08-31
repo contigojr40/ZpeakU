@@ -1,247 +1,161 @@
-/* ========== Reset & Base ========== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-html, body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
-  height: 100%;
-  background-color: var(--bg);
-  color: var(--fg);
-  transition: background 0.3s, color 0.3s;
-}
-a {
-  text-decoration: none;
-  color: inherit;
-}
-button, input, select {
-  font: inherit;
-  border: none;
-  outline: none;
-}
-.hidden { display: none !important; }
-
-/* ========== Theme ========== */
+/* ===== Variables de color ===== */
 :root {
+  --bg: #0f0f13;
+  --bg-2: #15151c;
+  --text: #e7e7ea;
+  --muted: #9aa0a6;
+  --primary: #7b2cff;
+  --primary-2: #b855ff;
+  --border: #262633;
+  --danger: #ff4d4f;
+}
+
+[data-theme="light"] {
   --bg: #ffffff;
-  --fg: #111111;
-  --muted: #666;
-  --primary: #6c47ff;
-  --danger: #e63946;
-  --card: #f7f7f7;
-  --border: #ddd;
-}
-[data-theme="dark"] {
-  --bg: #0f0f0f;
-  --fg: #f7f7f7;
-  --muted: #aaa;
-  --primary: #a78bfa;
-  --danger: #ef4444;
-  --card: #1b1b1b;
-  --border: #333;
+  --bg-2: #f6f7f9;
+  --text: #111;
+  --muted: #555;
+  --primary: #7b2cff;
+  --primary-2: #b855ff;
+  --border: #e4e6eb;
+  --danger: #d9363e;
 }
 
-/* ========== Layout ========== */
-.site-header, .site-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
+/* ===== Reset ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
-.site-footer {
-  border-top: 1px solid var(--border);
-  border-bottom: none;
-  margin-top: 2rem;
+
+/* ===== Header ===== */
+.site-header {
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 20px; border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0)) , var(--bg);
+  backdrop-filter: saturate(140%) blur(6px);
 }
-.brand {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-.brand-logo {
-  height: 28px;
-}
-.main-nav {
-  display: flex;
-  gap: 1rem;
-}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-logo { height: 28px; width: auto; }
+.brand-name { font-weight: 600; opacity: .9; }
+.main-nav { display: flex; gap: 18px; margin-left: 16px; }
 .main-nav a {
-  padding: .3rem .7rem;
-  border-radius: .3rem;
-  transition: background 0.2s;
+  color: var(--text); opacity: .85;
+  text-decoration: none; padding: 6px 0;
+  transition: .2s;
 }
-.main-nav a.active {
-  background: var(--primary);
-  color: #fff;
-}
-.actions {
-  display: flex;
-  gap: .5rem;
-  align-items: center;
-}
+.main-nav a:hover { opacity: 1; transform: translateY(-1px); }
+.main-nav a.active { border-bottom: 2px solid var(--primary); }
+.actions { margin-left: auto; display: flex; gap: 10px; }
 
-/* ========== Buttons ========== */
-button, .pill {
-  padding: .5rem 1rem;
-  border-radius: 2rem;
-  font-size: .9rem;
-  cursor: pointer;
-  transition: all 0.2s;
+/* ===== Botones & tags ===== */
+.ghost {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer;
 }
+.pill {
+  background: var(--bg-2); color: var(--text);
+  padding: 8px 14px; border-radius: 999px; text-decoration: none;
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--border); cursor: pointer;
+  transition: box-shadow .2s ease, transform .2s ease, background .2s ease;
+}
+.pill:hover { box-shadow: 0 6px 18px rgba(0,0,0,.3); transform: translateY(-1px); }
 .pill.primary {
-  background: var(--primary);
-  color: #fff;
+  background: linear-gradient(135deg,var(--primary),var(--primary-2));
+  border-color: transparent; color: #fff;
 }
-.pill.outline {
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  background: transparent;
-}
-.pill.danger {
-  background: var(--danger);
-  color: #fff;
-}
-.pill.tiny-btn {
-  padding: .2rem .6rem;
-  font-size: .75rem;
-}
-button:hover, .pill:hover {
-  opacity: 0.85;
+.pill.outline { background: transparent; border: 1px solid var(--border); }
+.pill.danger { border-color: var(--danger); color: var(--danger); }
+.tiny-btn { font-size: .85rem; padding: 5px 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 4px 10px; font-size: .85rem; background: rgba(255,255,255,.06);
 }
 
-/* ========== Cards & Sections ========== */
+/* ===== Layout general ===== */
+#app { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+.grid.two { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 900px) { .grid.two { grid-template-columns: 1fr 1fr; } }
 .card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: .6rem;
-  padding: 1.2rem;
-  margin: 1rem 0;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px; margin-bottom: 16px;
 }
-.card.inner {
-  background: transparent;
-  border: 1px dashed var(--border);
+.card.inner { background: rgba(0,0,0,.15); }
+.hero {
+  padding: 28px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(123,44,255,.18), rgba(184,85,255,.08));
 }
-.section-card {
-  margin-top: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: .6rem;
-  padding: 1rem;
-}
-.section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: .8rem;
-}
-.chip, .tag, .badge {
-  font-size: .75rem;
-  background: var(--border);
-  border-radius: 999px;
-  padding: .2rem .6rem;
-}
-.badge {
-  background: var(--primary);
-  color: #fff;
-}
-
-/* ========== Grid / Flex Helpers ========== */
-.grid.two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.row { display: flex; }
+.hero.center { text-align: center; }
+.row { display: flex; align-items: center; }
 .wrap { flex-wrap: wrap; }
-.gap { gap: .5rem; }
 .space-between { justify-content: space-between; }
-.center { text-align: center; }
+.gap { gap: 10px; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+.mt8 { margin-top: 8px; }
 
-/* ========== Text Utilities ========== */
-.tiny { font-size: .8rem; }
+input, select {
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); padding: 8px 10px;
+  border-radius: 10px;
+}
+input.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .muted { color: var(--muted); }
-.mono { font-family: monospace; }
+.tiny { font-size: .875rem; }
+.badge {
+  background: rgba(123,44,255,.18); border: 1px solid var(--border);
+  border-radius: 999px; padding: 6px 10px;
+}
+.tag {
+  font-size: .75rem; padding: 2px 8px; border-radius: 999px;
+  border: 1px solid var(--border); background: rgba(255,255,255,.06);
+}
+.list { list-style: none; }
+.list li { padding: 8px 0; border-bottom: 1px dashed var(--border); }
+.list li:last-child { border-bottom: none; }
+.view.hidden { display: none; }
 
-/* ========== Feeds ========== */
-.feed-list {
-  display: flex;
-  flex-direction: column;
-  gap: .6rem;
+/* ===== Shorts estilo TikTok ===== */
+.shorts-rail {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
 }
-.feed-item {
-  display: flex;
-  gap: .8rem;
-  padding: .6rem;
-  border-radius: .5rem;
-  background: var(--card);
+.short-card {
+  background: #0c0c12; border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; cursor: pointer;
+  transition: transform .2s ease;
 }
-.feed-thumb {
-  width: 120px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: .4rem;
-}
+.short-card:hover { transform: scale(1.03); }
+.short-thumb { width: 100%; aspect-ratio: 9/16; object-fit: cover; }
+.short-meta { padding: 10px; }
+.short-meta .title { font-weight: 600; font-size: .95rem; margin-bottom: 6px; }
+.short-meta .tags, .short-meta .views { font-size: .75rem; color: var(--muted); }
 
-/* ========== Modals ========== */
+/* ===== Modales ===== */
 .modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
+  position: fixed; inset: 0; background: rgba(0,0,0,.6);
+  display: flex; align-items: center; justify-content: center;
 }
 .modal.hidden { display: none; }
-.modal-body {
-  background: var(--card);
-  border-radius: .6rem;
-  max-width: 600px;
-  width: 90%;
-  padding: 1.2rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+.modal .modal-body {
+  background: var(--bg-2); padding: 20px;
+  border-radius: 14px; width: min(700px, 96%);
+}
+.player-wrap { position: relative; padding-top: 56.25%; }
+.player-wrap iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
 }
 
-/* ========== Forms ========== */
-input, select {
-  border: 1px solid var(--border);
-  padding: .5rem .7rem;
-  border-radius: .4rem;
-  width: 100%;
-  background: var(--bg);
-  color: var(--fg);
+/* ===== Footer ===== */
+.site-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 20px; border-top: 1px solid var(--border);
+  color: var(--muted); margin-top: 40px;
 }
-input:focus, select:focus {
-  border-color: var(--primary);
-  outline: none;
-}
-
-/* ========== Lists & Tabs ========== */
-.list { list-style: none; }
-.list li {
-  padding: .4rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.tabs {
-  display: flex;
-  gap: .5rem;
-  margin-bottom: .8rem;
-}
-.tab {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: .4rem .8rem;
-  border-radius: .4rem;
-  cursor: pointer;
-}
-.tab.active {
-  background: var(--primary);
-  color: #fff;
-}
-
-/* ========== Footer ========== */
-.site-footer nav {
-  display: flex;
-  gap: 1rem;
-}
+.site-footer .links { display: flex; gap: 14px; }
+.site-footer a { color: var(--muted); text-decoration: none; }
+.site-footer a:hover { color: var(--text); }

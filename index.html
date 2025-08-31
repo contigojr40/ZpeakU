@@ -47,15 +47,16 @@
         </div>
       </div>
 
-      <div class="feeds grid two">
-        <section class="feed">
-          <header class="feed-head"><h3 data-i18n="home.shorts">Shorts gratis de la comunidad</h3></header>
-          <div id="shortsFeed" class="feed-list scroll-snap-y"></div>
-        </section>
-        <section class="feed">
-          <header class="feed-head"><h3 data-i18n="home.videos">Videos públicos de la comunidad</h3></header>
-          <div id="videosFeed" class="feed-list scroll-snap-y"></div>
-        </section>
+      <!-- Rail de Shorts -->
+      <div class="card">
+        <h3 data-i18n="home.shorts">Shorts gratis de la comunidad</h3>
+        <div id="homeShortsRail" class="shorts-rail"></div>
+      </div>
+
+      <!-- Rail de Videos -->
+      <div class="card">
+        <h3 data-i18n="home.videos">Videos públicos de la comunidad</h3>
+        <div id="videosFeed" class="feed-list scroll-snap-y"></div>
       </div>
     </section>
 
@@ -63,14 +64,16 @@
     <section id="view-fans" class="view hidden">
       <div class="card">
         <h2 data-i18n="fan.title">Acceso de Fan</h2>
-        <p class="muted" data-i18n="fan.subtitle">Verifica tu email con un código OTP.</p>
+        <p class="muted" data-i18n="fan.subtitle">Verifica tu email con un código OTP. Tu cuenta es gratis; puedes desbloquear contenidos cuando quieras.</p>
 
+        <!-- Paso 1 -->
         <div id="fanStepEmail" class="stack">
           <input id="fanEmail" class="mono" inputmode="email" autocomplete="email" placeholder="email@correo.com" />
           <button id="btnFanSendOtp" class="pill primary" data-i18n="fan.send">Enviar código al email</button>
           <span id="fanOtpHint" class="tiny muted"></span>
         </div>
 
+        <!-- Paso 2 -->
         <div id="fanStepOtp" class="stack hidden">
           <label class="tiny muted" data-i18n="fan.codeLabel">Código OTP de 6 dígitos</label>
           <input id="fanOtp" class="mono" inputmode="numeric" maxlength="6" placeholder="••••••" />
@@ -80,11 +83,19 @@
           </div>
         </div>
 
+        <!-- Fan conectado -->
         <div id="fanHub" class="stack hidden">
           <div class="row gap wrap">
             <span data-i18n="fan.logged">Conectado como:</span>
             <span id="fanBadge" class="badge"></span>
             <button id="btnFanLogout" class="pill outline" data-i18n="fan.logout">Salir</button>
+          </div>
+
+          <div class="card inner">
+            <strong>All-Access</strong>
+            <span id="aaPriceTag" class="chip"></span>
+            <button id="btnUnlockAll" class="pill" data-i18n="fan.unlockAll">Desbloquear todo</button>
+            <span id="aaStatus" class="tiny muted"></span>
           </div>
         </div>
       </div>
@@ -94,6 +105,7 @@
     <section id="view-creator" class="view hidden">
       <h1 data-i18n="creator.title">Cuenta de Creador</h1>
 
+      <!-- OTP -->
       <div id="creatorStepEmail" class="card">
         <h3 data-i18n="creator.login">Login Creador</h3>
         <div class="row wrap gap">
@@ -112,49 +124,33 @@
         </div>
       </div>
 
-      <!-- Creator Panel -->
+      <!-- Panel -->
       <div id="creatorPanel" class="card hidden">
-        <div class="grid two">
-          <div class="card inner">
-            <h3>All-Access</h3>
-            <div class="row gap wrap">
-              <label class="stack">
-                <span class="tiny muted" data-i18n="creator.monthly">Precio mensual (USD)</span>
-                <input id="allAccessPrice" type="number" min="0" step="1" value="100" />
-              </label>
-              <button id="btnSaveAA" class="pill primary" data-i18n="creator.saveAA">Guardar All-Access</button>
-            </div>
-          </div>
-
-          <div class="card inner">
-            <h3 data-i18n="creator.donations">Donaciones</h3>
-            <div class="stack">
-              <input id="donPayPal" placeholder="https://paypal.me/tu_link" />
-              <input id="donCashApp" placeholder="https://cash.app/$usuario" />
-              <input id="donVenmo" placeholder="https://venmo.com/u/usuario" />
-              <input id="donZelle" placeholder="Correo o teléfono Zelle" />
-              <input id="donCustom" placeholder="https://tu-enlace.com" />
-              <button id="btnSaveDonations" class="pill" data-i18n="creator.saveDon">Guardar</button>
-              <span id="donSaved" class="tiny muted"></span>
-            </div>
-          </div>
+        <div class="row gap wrap">
+          <button id="btnCreatorLogout" class="pill outline" data-i18n="creator.logout">Salir</button>
         </div>
 
-        <!-- Botón Eliminar cuenta -->
-        <div class="stack mt8">
+        <div class="section-card">
+          <h3 data-i18n="creator.donations">Donaciones</h3>
+          <input id="donPayPal" placeholder="https://paypal.me/tu_link" />
+          <input id="donCashApp" placeholder="https://cash.app/$usuario" />
+          <input id="donVenmo" placeholder="https://venmo.com/u/usuario" />
+          <input id="donZelle" placeholder="Correo o teléfono Zelle" />
+          <input id="donCustom" placeholder="https://tu-enlace-personal.com" />
+          <button id="btnSaveDonations" class="pill">Guardar métodos de donación</button>
+          <span id="donSaved" class="tiny muted"></span>
+        </div>
+
+        <!-- Exportar y Eliminar -->
+        <div class="section-card">
+          <h3>Privacidad</h3>
+          <button id="btnExportData" class="pill outline">📦 Descargar mis datos (ZIP)</button>
           <button id="btnDeleteAccount" class="pill outline danger">🗑️ Eliminar cuenta</button>
-          <p class="tiny muted">Esta acción es irreversible.</p>
         </div>
 
-        <!-- Botón Exportar ZIP -->
+        <!-- Publicaciones -->
         <div class="section-card">
-          <div class="section-head"><h3>📦 Mis datos personales</h3></div>
-          <button id="btnExportData" class="pill outline">Descargar mis datos (ZIP)</button>
-        </div>
-
-        <!-- Mis publicaciones -->
-        <div class="section-card">
-          <div class="section-head"><h3>🗂️ Mis publicaciones</h3></div>
+          <h3>Mis publicaciones</h3>
           <div class="tabs">
             <button class="tab active" data-tab="pub-shorts">Shorts</button>
             <button class="tab" data-tab="pub-videos">Videos</button>
@@ -174,8 +170,11 @@
     <!-- SOPORTE -->
     <section id="view-support" class="view hidden">
       <h1 data-i18n="support.title">Soporte</h1>
-      <p data-i18n="support.text">Escríbenos si necesitas ayuda.</p>
-      <ul><li>Email: soporte@zpeaku.com</li></ul>
+      <p data-i18n="support.text">Escríbenos si necesitas ayuda con tu cuenta o transmisión.</p>
+      <ul>
+        <li>Email: soporte@zpeaku.com</li>
+        <li>Twitter: @zpeaku</li>
+      </ul>
     </section>
   </main>
 
@@ -190,39 +189,28 @@
     </nav>
   </footer>
 
-  <!-- Modal Player -->
+  <!-- Modales -->
   <div id="playerModal" class="modal hidden" aria-hidden="true">
     <div class="modal-body card">
-      <div class="row wrap gap space-between">
-        <strong id="pmTitle"></strong>
-        <button id="pmClose" class="pill outline tiny-btn">Cerrar</button>
-      </div>
-      <div class="player-wrap">
-        <iframe id="ytFrame" allowfullscreen></iframe>
-      </div>
-      <div class="row wrap gap mt8"><div id="pmTags" class="tiny muted"></div></div>
-      <div class="row wrap gap mt8">
-        <button id="pmDonate" class="pill">❤️ Donar al creador</button>
-      </div>
+      <strong id="pmTitle"></strong>
+      <iframe id="ytFrame" allowfullscreen></iframe>
+      <div id="pmTags" class="tiny muted"></div>
+      <button id="pmClose" class="pill outline tiny-btn">Cerrar</button>
     </div>
   </div>
 
-  <!-- Modal Donar -->
   <div id="donateModal" class="modal hidden" aria-hidden="true">
     <div class="modal-body card">
-      <div class="row wrap gap space-between">
-        <strong data-i18n="donate.title">Elige un método de donación</strong>
-        <button id="donClose" class="pill outline tiny-btn">Cerrar</button>
-      </div>
+      <strong data-i18n="donate.title">Elige un método de donación</strong>
       <div id="donLinks" class="stack mt8"></div>
-      <p class="tiny muted" data-i18n="donate.note">El pago va directo al creador.</p>
+      <button id="donClose" class="pill outline tiny-btn">Cerrar</button>
     </div>
   </div>
 
-  <!-- SDK & MAIN -->
+  <!-- SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    window.SUPABASE_URL  = "https://TU-PROJECT-URL.supabase.co";
+    window.SUPABASE_URL = "https://TU-PROJECT-URL.supabase.co";
     window.SUPABASE_ANON_KEY = "TU-ANON-KEY";
   </script>
   <script src="./main.js"></script>

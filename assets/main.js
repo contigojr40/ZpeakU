@@ -2,143 +2,172 @@
 const $  = (sel, ctx=document) => ctx.querySelector(sel);
 const $$ = (sel, ctx=document) => [...ctx.querySelectorAll(sel)];
 const store = {
-  get:(k,def)=>{ try{ return JSON.parse(localStorage.getItem(k)) ?? def }catch{ return def } },
-  set:(k,v)=> localStorage.setItem(k, JSON.stringify(v)),
-  del:(k)=> localStorage.removeItem(k),
+  get: (k,def)=>{ try{ return JSON.parse(localStorage.getItem(k)) ?? def }catch{ return def } },
+  set: (k,v)=> localStorage.setItem(k, JSON.stringify(v)),
+  del: (k)=> localStorage.removeItem(k)
 };
-
-// ========== DEMO MODE ==========
-const DEMO_MODE = !window.SUPABASE_URL || /TU-PROJECT-URL/i.test(window.SUPABASE_URL);
-
-// ========== i18n ==========
-const I18N = {
-  es:{
-    "nav.home":"Inicio","nav.fans":"Fans","nav.creator":"Creador","nav.support":"Soporte","nav.login":"Iniciar sesión",
-    "hero.title":"✨ Bienvenidos a ZpeakU","hero.subtitle":"La plataforma puente entre Fans y Creadores",
-    "hero.fan":"🔔 Suscribirme como Fan","hero.creator":"🧰 Suscribirme como Creador",
-    "home.shorts":"Shorts gratis de la comunidad","home.videos":"Videos públicos de la comunidad",
-    "fan.title":"Acceso de Fan","fan.subtitle":"Verifica tu email con un código OTP. Tu cuenta es gratis; puedes desbloquear contenidos cuando quieras.",
-    "fan.send":"Enviar código al email","fan.codeLabel":"Código OTP de 6 dígitos","fan.verify":"Verificar","fan.resend":"Reenviar",
-    "fan.logged":"Conectado como:","fan.logout":"Salir","fan.unlockAll":"Desbloquear todo",
-    "creator.title":"Cuenta de Creador","creator.login":"Login Creador","creator.send":"Enviar código al email",
-    "creator.verifyTitle":"Verificación","creator.verify":"Verificar","creator.resend":"Reenviar",
-    "creator.monthly":"Precio mensual (USD)","creator.saveAA":"Guardar All-Access","creator.donations":"Donaciones",
-    "creator.saveDon":"Guardar métodos de donación","creator.front":"Mostrar en portada","creator.addShort":"Agregar Short","creator.addVideo":"Agregar Video",
-    "support.title":"Soporte","support.text":"Escríbenos si necesitas ayuda con tu cuenta o transmisión.",
-    "footer.support":"Soporte","footer.terms":"Términos","footer.privacy":"Privacidad",
-    "modal.close":"Cerrar","donate.btn":"❤️ Donar al creador","donate.title":"Elige un método de donación","donate.note":"El pago va directo al creador (fuera de ZpeakU).",
-    "don.paypal":"PayPal","don.cashapp":"Cash App","don.venmo":"Venmo","don.zelle":"Zelle","don.custom":"Otro"
-  },
-  en:{
-    "nav.home":"Home","nav.fans":"Fans","nav.creator":"Creator","nav.support":"Support","nav.login":"Log in",
-    "hero.title":"✨ Welcome to ZpeakU","hero.subtitle":"A bridge platform for Fans & Creators",
-    "hero.fan":"🔔 Subscribe as Fan","hero.creator":"🧰 Subscribe as Creator",
-    "home.shorts":"Community free Shorts","home.videos":"Community public Videos",
-    "fan.title":"Fan Access","fan.subtitle":"Verify your email with an OTP. Your account is free; you can unlock content anytime.",
-    "fan.send":"Send code to email","fan.codeLabel":"6-digit OTP","fan.verify":"Verify","fan.resend":"Resend",
-    "fan.logged":"Logged in as:","fan.logout":"Log out","fan.unlockAll":"Unlock all",
-    "creator.title":"Creator account","creator.login":"Creator Login","creator.send":"Send code",
-    "creator.verifyTitle":"Verification","creator.verify":"Verify","creator.resend":"Resend",
-    "creator.monthly":"Monthly price (USD)","creator.saveAA":"Save All-Access","creator.donations":"Donations",
-    "creator.saveDon":"Save donation methods","creator.front":"Show on homepage","creator.addShort":"Add Short","creator.addVideo":"Add Video",
-    "support.title":"Support","support.text":"Write us if you need help with your account or streaming.",
-    "footer.support":"Support","footer.terms":"Terms","footer.privacy":"Privacy",
-    "modal.close":"Close","donate.btn":"❤️ Donate to creator","donate.title":"Choose a donation method","donate.note":"Payment goes directly to the creator (outside ZpeakU).",
-    "don.paypal":"PayPal","don.cashapp":"Cash App","don.venmo":"Venmo","don.zelle":"Zelle","don.custom":"Other"
-  }
-};
-function t(key){ const lang=store.get("lang","es"); return (I18N[lang] && I18N[lang][key]) || key; }
-function applyI18n(){
-  const lang=store.get("lang","es");
-  $$("[data-i18n]").forEach(el=>{
-    const k=el.getAttribute("data-i18n");
-    if(I18N[lang] && I18N[lang][k]) el.textContent = I18N[lang][k];
-  });
-}
-
-// ========== Theme & Router ==========
-function setTheme(theme){ document.body.setAttribute("data-theme", theme); store.set("theme", theme); }
-const ROUTES = ["home","fans","creator","support"];
-function show(route){
-  ROUTES.forEach(r=> $("#view-"+r)?.classList.toggle("hidden", r!==route));
-  $$("#mainNav a").forEach(a=>{
-    const m=a.getAttribute("href").replace("#/","");
-    a.classList.toggle("active", m===route);
-  });
-}
-function handleHash(){ const r=(location.hash.replace("#/","")||"home"); show(ROUTES.includes(r)? r : "home"); }
 
 // ========== Supabase ==========
 const supabase = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-async function sendOtpEmail(email){ if(DEMO_MODE) return null; const { error }=await supabase.auth.signInWithOtp({ email, options:{ shouldCreateUser:true } }); return error; }
-async function verifyOtpEmail(email, otp){ if(DEMO_MODE) return { error:null }; const { error }=await supabase.auth.verifyOtp({ email, token:String(otp||"").trim(), type:"email" }); return { error }; }
 
-// ========== CREATOR storage/profile ==========
-const PROFILE_KEY = "zpk_creator_profile";
-const defaultProfile = { allAccessPrice:100, donations:{ paypal:"",cashapp:"",venmo:"",zelle:"",custom:"" }, sections:{shorts:{items:[]},videos:{items:[]},playlists:{items:[]},live:{items:[]},special:{items:[]}} };
-function getProfile(){ return store.get(PROFILE_KEY, defaultProfile); }
+// ========== Router ==========
+const ROUTES = ["home","fans","creator","support"];
+function show(route){
+  ROUTES.forEach(r => $("#view-"+r)?.classList.toggle("hidden", r!==route));
+  $$("#mainNav a").forEach(a=>{
+    const r=a.getAttribute("href").replace("#/","");
+    a.classList.toggle("active", r===route);
+  });
+}
+function handleHash(){ const r=location.hash.replace("#/","")||"home"; show(ROUTES.includes(r)?r:"home"); }
+
+// ========== Theme ==========
+function setTheme(theme){ document.body.setAttribute("data-theme", theme); store.set("theme", theme); }
+
+// ========== I18n ==========
+const I18N = {
+  es:{ home:"Inicio", fans:"Fans", creator:"Creador", support:"Soporte", login:"Iniciar sesión" },
+  en:{ home:"Home", fans:"Fans", creator:"Creator", support:"Support", login:"Login" }
+};
+function applyI18n(){
+  const lang=store.get("lang","es");
+  $$("#mainNav a").forEach(a=>{
+    const r=a.getAttribute("href").replace("#/","");
+    if(I18N[lang][r]) a.textContent=I18N[lang][r];
+  });
+  $("#langSel").value=lang;
+}
+
+// ========== Perfil Demo Local ==========
+const PROFILE_KEY="zpk_creator_profile";
+const defaultProfile={allAccessPrice:100,sections:{shorts:{items:[]},videos:{items:[]},playlists:{items:[]},live:{items:[]},special:{items:[]}}};
+function getProfile(){ return store.get(PROFILE_KEY, JSON.parse(JSON.stringify(defaultProfile))); }
 function saveProfile(p){ store.set(PROFILE_KEY,p); }
+function newId(){ return 'it_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7); }
 
-// ========== Donaciones ==========
-function saveDonations(){
-  const p=getProfile();
-  p.donations={
-    paypal:$("#donPayPal")?.value.trim()||"",
-    cashapp:$("#donCashApp")?.value.trim()||"",
-    venmo:$("#donVenmo")?.value.trim()||"",
-    zelle:$("#donZelle")?.value.trim()||"",
-    custom:$("#donCustom")?.value.trim()||""
-  };
-  saveProfile(p);
-  $("#donSaved").textContent="Guardado ✅";
-  setTimeout(()=>$("#donSaved").textContent="",1500);
+// ========== Sesiones ==========
+function sessionFan(){ return store.get("zpk_session_fan",null); }
+function setSessionFan(s){ store.set("zpk_session_fan",s); }
+function clearSessionFan(){ store.del("zpk_session_fan"); }
+function sessionCreator(){ return store.get("zpk_session_creator",null); }
+function setSessionCreator(s){ store.set("zpk_session_creator",s); }
+function clearSessionCreator(){ store.del("zpk_session_creator"); }
+
+// ========== OTP ==========
+async function sendOtpEmail(email){ const {error}=await supabase.auth.signInWithOtp({email,options:{shouldCreateUser:true}}); return error; }
+async function verifyOtpEmail(email,otp){ const {error}=await supabase.auth.verifyOtp({email,token:String(otp||"").trim(),type:"email"}); return {error}; }
+
+// ========== YouTube helpers ==========
+function extractYouTubeId(urlOrId){ try{const u=new URL(urlOrId); if(u.hostname.includes("youtu.be")) return u.pathname.split("/").pop(); if(u.searchParams.get("v")) return u.searchParams.get("v"); return urlOrId;}catch{return urlOrId;} }
+function ytWatchUrl(idOrUrl){ return `https://www.youtube.com/watch?v=${extractYouTubeId(idOrUrl)}`; }
+function ytEmbedSrc(idOrUrl){ return `https://www.youtube.com/embed/${extractYouTubeId(idOrUrl)}?modestbranding=1&rel=0&playsinline=1`; }
+function ytThumb(idOrUrl){ return `https://i.ytimg.com/vi/${extractYouTubeId(idOrUrl)}/hqdefault.jpg`; }
+
+// ========== Player ==========
+function openPlayerModal({id,title,url,tags=[]}){
+  $("#pmTitle").textContent=title;
+  $("#pmTags").textContent=(tags||[]).map(t=>"#"+t).join(" ");
+  $("#ytFrame").src=ytEmbedSrc(url);
+  $("#playerModal").classList.remove("hidden");
+}
+function closePlayerModal(){ $("#ytFrame").src="about:blank"; $("#playerModal").classList.add("hidden"); }
+$("#pmClose")?.addEventListener("click", closePlayerModal);
+$("#playerModal")?.addEventListener("click", e=>{ if(e.target.id==="playerModal") closePlayerModal(); });
+
+// ========== Render HOME ==========
+function renderHome(){
+  const rail=$("#homeShortsRail"); if(!rail) return;
+  rail.innerHTML="";
+  const shorts=(getProfile().sections.shorts.items||[]).filter(s=>!s.private);
+  if(!shorts.length){ rail.innerHTML="<div class='muted tiny'>— Sin shorts aún —</div>"; return; }
+  shorts.forEach(s=>{
+    const card=document.createElement("div"); card.className="short-card";
+    card.innerHTML=`
+      <img class="short-thumb" src="${s.thumb||ytThumb(s.url)}" data-play="${s.id}">
+      <div class="short-meta">
+        <div class="title">${s.title}</div>
+        <div class="tags">${(s.tags||[]).map(t=>"#"+t).join(" ")}</div>
+      </div>`;
+    rail.appendChild(card);
+  });
+  $$("#homeShortsRail [data-play]").forEach(el=>{
+    el.onclick=()=>openPlayerModal({id:el.dataset.play,title:"Short",url:shorts.find(x=>x.id===el.dataset.play).url});
+  });
 }
 
-// ========== Publicaciones ==========
-function renderShortsFeed(){
-  const p=getProfile(); const list=p.sections.shorts.items.filter(s=>s.front&&!s.private);
-  $("#shortsFeed").innerHTML=list.length?list.map(s=>`<div>${s.title}</div>`).join(""):"<div class='tiny muted'>—</div>";
+// ========== Render FANS ==========
+function renderFanHub(){
+  const f=sessionFan(); if(!f){ $("#fanHub")?.classList.add("hidden"); return; }
+  $("#fanBadge").textContent=f.email; $("#fanHub").classList.remove("hidden");
 }
-function renderVideosFeed(){
-  const p=getProfile(); const list=p.sections.videos.items.filter(v=>(!v.price||Number(v.price)===0)&&!v.private);
-  $("#videosFeed").innerHTML=list.length?list.map(v=>`<div>${v.title}</div>`).join(""):"<div class='tiny muted'>—</div>";
+
+// ========== Render CREATOR ==========
+function renderCreatorPanel(){
+  const c=sessionCreator(); if(!c){ $("#creatorPanel")?.classList.add("hidden"); return; }
+  $("#creatorPanel").classList.remove("hidden");
 }
 
 // ========== Export ZIP ==========
-const btnExportData=document.getElementById("btnExportData");
+const btnExportData=$("#btnExportData");
 if(btnExportData){
-  btnExportData.addEventListener("click",async()=>{
+  btnExportData.addEventListener("click", async()=>{
     const token=(await supabase.auth.getSession()).data?.session?.access_token;
     const res=await fetch("/api/export",{headers:{Authorization:`Bearer ${token}`}});
-    if(!res.ok) return alert("Error al generar ZIP");
-    const blob=await res.blob(); const url=window.URL.createObjectURL(blob);
-    const a=document.createElement("a"); a.href=url; a.download="mis-datos.zip"; a.click(); window.URL.revokeObjectURL(url);
+    if(!res.ok) return alert("Error al exportar");
+    const blob=await res.blob(); const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="mis-datos.zip"; a.click(); URL.revokeObjectURL(url);
   });
 }
 
 // ========== Eliminar cuenta ==========
-const btnDeleteAccount=document.getElementById("btnDeleteAccount");
+const btnDeleteAccount=$("#btnDeleteAccount");
 if(btnDeleteAccount){
-  btnDeleteAccount.addEventListener("click",async()=>{
-    if(!confirm("¿Estás seguro de que deseas eliminar tu cuenta?")) return;
+  btnDeleteAccount.addEventListener("click", async()=>{
+    if(!confirm("¿Eliminar cuenta definitivamente?")) return;
     const token=(await supabase.auth.getSession()).data?.session?.access_token;
     const res=await fetch("/api/delete",{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});
-    if(res.ok){ alert("Cuenta eliminada correctamente."); await supabase.auth.signOut(); location.reload(); }
-    else{ alert("Error al eliminar la cuenta."); }
+    if(res.ok){ alert("Cuenta eliminada ✅"); await supabase.auth.signOut(); location.reload(); }
+    else alert("Error al eliminar cuenta");
   });
 }
 
 // ========== Bind UI ==========
 function bindUI(){
-  $("#btnTheme")?.addEventListener("click",()=>setTheme(document.body.getAttribute("data-theme")==="dark"?"light":"dark"));
-  const langSel=$("#langSel"); langSel.value=store.get("lang","es");
-  langSel.addEventListener("change",()=>{store.set("lang",langSel.value); applyI18n();});
-  window.addEventListener("hashchange", handleHash);
-  $$("#mainNav a").forEach(a=>a.addEventListener("click",()=>setTimeout(handleHash,0)));
+  $("#btnTheme")?.addEventListener("click", ()=>setTheme(document.body.getAttribute("data-theme")==="dark"?"light":"dark"));
+  $("#langSel")?.addEventListener("change",()=>{ store.set("lang",$("#langSel").value); applyI18n(); });
+
+  // FAN OTP
+  $("#btnFanSendOtp")?.addEventListener("click",async()=>{
+    const email=$("#fanEmail").value.trim().toLowerCase();
+    if(!email) return alert("Escribe tu email.");
+    const err=await sendOtpEmail(email); if(err) return alert("Error: "+err.message);
+    $("#fanStepEmail").classList.add("hidden"); $("#fanStepOtp").classList.remove("hidden");
+  });
+  $("#btnFanVerifyOtp")?.addEventListener("click",async()=>{
+    const email=$("#fanEmail").value.trim().toLowerCase(), otp=$("#fanOtp").value.trim();
+    const {error}=await verifyOtpEmail(email,otp); if(error) return alert("OTP incorrecto");
+    setSessionFan({email}); renderFanHub();
+  });
+  $("#btnFanLogout")?.addEventListener("click",()=>{ clearSessionFan(); renderFanHub(); });
+
+  // CREATOR OTP
+  $("#btnCreatorSendOtp")?.addEventListener("click",async()=>{
+    const email=$("#creatorEmail").value.trim().toLowerCase();
+    if(!email) return alert("Escribe tu email.");
+    const err=await sendOtpEmail(email); if(err) return alert("Error: "+err.message);
+    $("#creatorStepEmail").classList.add("hidden"); $("#creatorStepOtp").classList.remove("hidden");
+  });
+  $("#btnCreatorVerifyOtp")?.addEventListener("click",async()=>{
+    const email=$("#creatorEmail").value.trim().toLowerCase(), otp=$("#creatorOtp").value.trim();
+    const {error}=await verifyOtpEmail(email,otp); if(error) return alert("OTP incorrecto");
+    setSessionCreator({email}); renderCreatorPanel();
+  });
+  $("#btnCreatorLogout")?.addEventListener("click",()=>{ clearSessionCreator(); renderCreatorPanel(); });
 }
 
 // ========== Init ==========
 document.addEventListener("DOMContentLoaded",()=>{
   setTheme(store.get("theme","dark")); applyI18n();
-  handleHash(); bindUI(); renderShortsFeed(); renderVideosFeed();
+  window.addEventListener("hashchange",handleHash); handleHash();
+  bindUI(); renderHome(); renderFanHub(); renderCreatorPanel();
 });
