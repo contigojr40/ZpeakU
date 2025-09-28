@@ -11,7 +11,7 @@
   "routes": [
     {
       "src": "/.well-known/apple-developer-merchantid-domain-association.txt",
-      "dest": "/public/apple-developer-merchantid-domain-association.txt"
+      "dest": "/apple-developer-merchantid-domain-association.txt"
     },
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
