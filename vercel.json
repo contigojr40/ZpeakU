@@ -10,10 +10,20 @@
   ],
   "routes": [
     {
+      "src": "/.well-known/(.*)",
+      "dest": "/.well-known/$1"
+    },
+    {
       "src": "/apple-developer-merchantid-domain-association.txt",
       "dest": "/apple-developer-merchantid-domain-association.txt"
     },
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }
