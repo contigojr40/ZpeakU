@@ -14,8 +14,12 @@
       "dest": "/.well-known/$1"
     },
     {
+      "src": "/apple-developer-merchantid-domain-association",
+      "dest": "/.well-known/apple-developer-merchantid-domain-association.txt"
+    },
+    {
       "src": "/apple-developer-merchantid-domain-association.txt",
-      "dest": "/apple-developer-merchantid-domain-association.txt"
+      "dest": "/.well-known/apple-developer-merchantid-domain-association.txt"
     },
     {
       "src": "/api/(.*)",
