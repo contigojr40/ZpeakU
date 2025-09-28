@@ -7,19 +7,13 @@
     { "src": "assets/**/*", "use": "@vercel/static" },
     { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
+  "rewrites": [
+    {
+      "source": "/.well-known/apple-developer-merchantid-domain-association.txt",
+      "destination": "/apple-developer-merchantid-domain-association.txt"
+    }
+  ],
   "routes": [
-    {
-      "src": "/.well-known/(.*)",
-      "dest": "/.well-known/$1"
-    },
-    {
-      "src": "/apple-developer-merchantid-domain-association",
-      "dest": "/.well-known/apple-developer-merchantid-domain-association.txt"
-    },
-    {
-      "src": "/apple-developer-merchantid-domain-association.txt",
-      "dest": "/.well-known/apple-developer-merchantid-domain-association.txt"
-    },
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
