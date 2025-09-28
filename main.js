@@ -1,32 +1,51 @@
-// ===== Helpers =====
-const $ = (sel, ctx=document) => ctx.querySelector(sel);
-const $$ = (sel, ctx=document) => [...ctx.querySelectorAll(sel)];
-const store = {
-  get:(k,def)=>{ try{ return JSON.parse(localStorage.getItem(k)) ?? def }catch{ return def } },
-  set:(k,v)=> localStorage.setItem(k, JSON.stringify(v)),
-  del:(k)=> localStorage.removeItem(k),
-};
+/* =========================
+   Zpeaku - main.js (FIXED)
+   ========================= */
 
-// ===== Supabase =====
-const supabase = window.supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY
-);
+// ===== Helpers =====
+const $  = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+const store = {
+  get: (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+  del: (k)    => localStorage.removeItem(k),
+};
+const log = (...a) => console.log("[Zpeaku]", ...a);
+
+// ===== Supabase (inicialización tolerante) =====
+// Carga por CDN recomendada en index.html ANTES de main.js:
+// <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+// Y define (públicas) las vars en window:
+// <script>window.SUPABASE_URL="..."; window.SUPABASE_ANON_KEY="...";</script>
+let supabase = null;
+try {
+  if (window?.supabase?.createClient && window?.SUPABASE_URL && window?.SUPABASE_ANON_KEY) {
+    supabase = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    log("Supabase listo");
+  } else {
+    log("Supabase no inicializado (faltan SDK o vars públicas). Continuamos sin-auth.");
+  }
+} catch (e) {
+  console.warn("Supabase init error:", e);
+}
 
 // ===== Router =====
 const ROUTES = ["home","fans","creator","support"];
+const ALIAS  = { inicio: "home", fans: "fans", creador: "creator", soporte: "support" };
+
 function show(route){
-  ROUTES.forEach(r => {
-    $("#view-"+r)?.classList.toggle("hidden", r!==route);
-  });
-  $$("#mainNav a").forEach(a=>{
-    const m = a.getAttribute("href").replace("#/","");
-    a.classList.toggle("active", m===route);
+  ROUTES.forEach(r => { $("#view-" + r)?.classList.toggle("hidden", r !== route); });
+  $$("#mainNav a").forEach(a => {
+    const m = (a.getAttribute("href") || "").replace("#/","").replace("#","");
+    const normalized = ALIAS[m] || m;
+    a.classList.toggle("active", normalized === route);
   });
 }
+
 function handleHash(){
-  const r = location.hash.replace("#/","") || "home";
-  show(ROUTES.includes(r) ? r : "home");
+  const raw = (location.hash || "").replace("#/","").replace("#","");
+  const route = ALIAS[raw] || raw || "home";
+  show(ROUTES.includes(route) ? route : "home");
 }
 
 // ===== Theme =====
@@ -37,128 +56,135 @@ function setTheme(theme){
 
 // ===== i18n =====
 const I18N = {
-  es:{
-    home:"Inicio", fans:"Fans", creator:"Creador", support:"Soporte", login:"Iniciar sesión",
-    subFan:"🔔 Suscribirme como Fan", subCreator:"🧰 Suscribirme como Creador",
-    export:"Descargar mis datos (ZIP)", delete:"🗑️ Eliminar cuenta"
-  },
-  en:{
-    home:"Home", fans:"Fans", creator:"Creator", support:"Support", login:"Log in",
-    subFan:"🔔 Subscribe as Fan", subCreator:"🧰 Subscribe as Creator",
-    export:"Download my data (ZIP)", delete:"🗑️ Delete account"
-  }
+  es:{ home:"Inicio", fans:"Fans", creator:"Creador", support:"Soporte", login:"Iniciar sesión",
+       subFan:"🔔 Suscribirme como Fan", subCreator:"🧰 Suscribirme como Creador",
+       export:"Descargar mis datos (ZIP)", delete:"🗑️ Eliminar cuenta" },
+  en:{ home:"Home", fans:"Fans", creator:"Creator", support:"Support", login:"Log in",
+       subFan:"🔔 Subscribe as Fan", subCreator:"🧰 Subscribe as Creator",
+       export:"Download my data (ZIP)", delete:"🗑️ Delete account" }
 };
 function applyI18n(){
   const lang = store.get("lang","es");
-  $("#langSel").value = lang;
-  const t = I18N[lang];
+  $("#langSel") && ($("#langSel").value = lang);
+  const t = I18N[lang] || I18N.es;
   $$("#mainNav a").forEach(a=>{
-    const key=a.getAttribute("href").replace("#/","");
-    if(t[key]) a.textContent=t[key];
+    const key = (a.getAttribute("href") || "").replace("#/","").replace("#","");
+    const norm = ALIAS[key] || key;
+    if (t[norm]) a.textContent = t[norm];
   });
-  $("a.pill.primary") && ($("a.pill.primary").textContent = t.subFan);
-  $("a.pill.outline") && ($("a.pill.outline").textContent = t.subCreator);
-  $("#btnExportData") && ($("#btnExportData").textContent = t.export);
+  $("a.pill.primary")  && ($("a.pill.primary").textContent  = t.subFan);
+  $("a.pill.outline")  && ($("a.pill.outline").textContent  = t.subCreator);
+  $("#btnExportData")  && ($("#btnExportData").textContent  = t.export);
   $("#btnDeleteAccount") && ($("#btnDeleteAccount").textContent = t.delete);
 }
 
 // ===== Player Modal =====
 function openPlayerById(id){
-  $("#pmTitle").textContent = "Video demo "+id;
-  $("#ytFrame").src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
-  $("#playerModal").classList.remove("hidden");
+  $("#pmTitle") && ($("#pmTitle").textContent = "Video demo " + id);
+  if ($("#ytFrame")) $("#ytFrame").src = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+  $("#playerModal")?.classList.remove("hidden");
 }
 $("#pmClose")?.addEventListener("click", ()=>{
-  $("#ytFrame").src="about:blank";
-  $("#playerModal").classList.add("hidden");
+  if ($("#ytFrame")) $("#ytFrame").src = "about:blank";
+  $("#playerModal")?.classList.add("hidden");
 });
 $("#playerModal")?.addEventListener("click",(e)=>{
-  if(e.target.id==="playerModal"){
-    $("#ytFrame").src="about:blank";
-    $("#playerModal").classList.add("hidden");
+  if(e.target.id === "playerModal"){
+    if ($("#ytFrame")) $("#ytFrame").src = "about:blank";
+    $("#playerModal")?.classList.add("hidden");
   }
 });
 
 // ===== Donate Modal =====
-$("#pmDonate")?.addEventListener("click",()=>{
-  $("#donateModal").classList.remove("hidden");
-});
-$("#donClose")?.addEventListener("click",()=>{
-  $("#donateModal").classList.add("hidden");
-});
+$("#pmDonate")?.addEventListener("click",()=> $("#donateModal")?.classList.remove("hidden"));
+$("#donClose")?.addEventListener("click",()=> $("#donateModal")?.classList.add("hidden"));
 
 // ===== Account Center =====
 $("#btnExportData")?.addEventListener("click", async ()=>{
-  const token=(await supabase.auth.getSession()).data?.session?.access_token;
-  const res = await fetch("/api/export",{
-    headers:{Authorization:`Bearer ${token}`}
-  });
-  if(!res.ok) return alert("Error exportando ZIP");
-  const blob=await res.blob();
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="mis-datos-zpeaku.zip";
-  a.click();
+  try {
+    const token = supabase ? (await supabase.auth.getSession())?.data?.session?.access_token : null;
+    const res = await fetch("/api/export", { headers: token ? {Authorization:`Bearer ${token}`} : {} });
+    if(!res.ok) throw new Error("export fail");
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "mis-datos-zpeaku.zip";
+    a.click();
+  } catch (e) {
+    alert("Error exportando ZIP");
+    console.error(e);
+  }
 });
 
 $("#btnDeleteAccount")?.addEventListener("click", async ()=>{
   if(!confirm("¿Seguro que quieres eliminar tu cuenta?")) return;
-  const token=(await supabase.auth.getSession()).data?.session?.access_token;
-  const res=await fetch("/api/delete",{
-    method:"DELETE", headers:{Authorization:`Bearer ${token}`}
-  });
-  if(res.ok){
+  try {
+    const token = supabase ? (await supabase.auth.getSession())?.data?.session?.access_token : null;
+    const res = await fetch("/api/delete", { method:"DELETE", headers: token ? {Authorization:`Bearer ${token}`} : {} });
+    if(!res.ok) throw new Error("delete fail");
     alert("Cuenta eliminada");
-    await supabase.auth.signOut();
+    if (supabase) await supabase.auth.signOut();
     location.reload();
-  } else {
+  } catch (e) {
     alert("Error al eliminar cuenta");
+    console.error(e);
   }
 });
 
-// ===== Stripe Subscribe Buttons =====
-document.querySelectorAll("a.pill.primary").forEach(btn=>{
+// ===== Suscripciones (Fan / Creador) =====
+async function postSubscribe(kind){
+  const res = await fetch("/api/subscribe", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ type: kind })
+  });
+  const data = await res.json().catch(()=> ({}));
+  if (!res.ok) throw new Error(data?.error || "subscribe failed");
+  if (data?.url) window.location.href = data.url;
+  return data;
+}
+
+// Handlers por ID (tus botones visibles)
+$("#btn-fan")?.addEventListener("click", async (e)=>{
+  e.preventDefault();
+  try { await postSubscribe("fan"); } catch(err){ alert("No se pudo suscribir como Fan"); console.error(err); }
+});
+$("#btn-creator")?.addEventListener("click", async (e)=>{
+  e.preventDefault();
+  try { await postSubscribe("creator"); } catch(err){ alert("No se pudo iniciar el onboarding de Creador"); console.error(err); }
+});
+
+// Handlers por clase (si también existen .pill)
+$$("a.pill.primary").forEach(btn=>{
   btn.addEventListener("click", async e=>{
     e.preventDefault();
-    const res=await fetch("/api/subscribe",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({type:"fan"})
-    });
-    const data=await res.json();
-    if(data.url) window.location.href=data.url;
+    try { await postSubscribe("fan"); } catch(err){ alert("No se pudo suscribir como Fan"); console.error(err); }
+  });
+});
+$$("a.pill.outline").forEach(btn=>{
+  btn.addEventListener("click", async e=>{
+    e.preventDefault();
+    try { await postSubscribe("creator"); } catch(err){ alert("No se pudo iniciar el onboarding de Creador"); console.error(err); }
   });
 });
 
-document.querySelectorAll("a.pill.outline").forEach(btn=>{
-  btn.addEventListener("click", async e=>{
-    e.preventDefault();
-    const res=await fetch("/api/subscribe",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({type:"creator"})
-    });
-    const data=await res.json();
-    if(data.url) window.location.href=data.url;
-  });
-});
-
-// ===== Bind UI =====
+// ===== UI básicos =====
 function bindUI(){
-  $("#btnTheme")?.addEventListener("click",()=>{
-    setTheme(document.body.getAttribute("data-theme")==="dark"?"light":"dark");
+  $("#btnTheme")?.addEventListener("click", ()=>{
+    setTheme(document.body.getAttribute("data-theme") === "dark" ? "light" : "dark");
   });
-  $("#langSel")?.addEventListener("change",()=>{
-    store.set("lang",$("#langSel").value);
+  $("#langSel")?.addEventListener("change", ()=>{
+    store.set("lang", $("#langSel").value);
     applyI18n();
   });
 }
 
 // ===== Init =====
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", ()=>{
+  log("main.js cargado ✅");
   setTheme(store.get("theme","dark"));
   applyI18n();
   handleHash();
-  window.addEventListener("hashchange",handleHash);
+  window.addEventListener("hashchange", handleHash);
   bindUI();
 });
