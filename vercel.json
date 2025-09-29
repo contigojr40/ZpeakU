@@ -1,7 +1,4 @@
 {
-  "builds": [
-    { "src": "api/apple-verify.js", "use": "@vercel/node" }
-  ],
   "rewrites": [
     {
       "source": "/.well-known/apple-developer-merchantid-domain-association.txt",
