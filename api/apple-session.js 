@@ -1,0 +1,101 @@
+// /api/apple-session.js
+import https from "https";
+
+export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
+
+  try {
+    const { validationURL } = req.body || {};
+    if (!validationURL) return res.status(400).json({ error: "Missing validationURL" });
+
+    // Solo hosts válidos de Apple (evita SSRF)
+    const url = new URL(validationURL);
+    const allowedHosts = new Set([
+      "apple-pay-gateway.apple.com",
+      "apple-pay-gateway-nc-pod1.apple.com",
+      "apple-pay-gateway-nc-pod2.apple.com",
+      "apple-pay-gateway-nc-pod3.apple.com",
+      "apple-pay-gateway-nc-pod4.apple.com",
+      "apple-pay-gateway-nc-pod5.apple.com",
+      "apple-pay-gateway-nc-pod6.apple.com",
+      "apple-pay-gateway-pr-pod1.apple.com",
+      "apple-pay-gateway-pr-pod2.apple.com",
+      "apple-pay-gateway-cert.apple.com",
+      "cn-apple-pay-gateway.apple.com",
+    ]);
+    if (!allowedHosts.has(url.hostname)) {
+      return res.status(422).json({ error: "Invalid validationURL host" });
+    }
+
+    // Variables de entorno
+    const merchantIdentifier = process.env.APPLE_MERCHANT_ID;           // ej: merchant.com.zpeak-u
+    const domainName = process.env.APPLE_MERCHANT_DOMAIN;               // ej: zpeak-u.com
+    const displayName = process.env.APPLE_MERCHANT_DISPLAY_NAME || "ZpeakU";
+    const certB64 = process.env.APPLE_MERCHANT_CERT_BASE64;             // cert.pem en base64
+    const keyB64  = process.env.APPLE_MERCHANT_KEY_BASE64;              // key.pem en base64
+    const passphrase = process.env.APPLE_MERCHANT_KEY_PASS || undefined;
+
+    if (!merchantIdentifier || !domainName || !certB64 || !keyB64) {
+      return res.status(500).json({ error: "Missing Apple Pay server configuration" });
+    }
+
+    const cert = Buffer.from(certB64, "base64");
+    const key  = Buffer.from(keyB64, "base64");
+
+    // Payload de validación para Apple
+    const payload = JSON.stringify({
+      merchantIdentifier,
+      displayName,
+      initiative: "web",
+      initiativeContext: domainName,
+      domainName,
+    });
+
+    const options = {
+      method: "POST",
+      hostname: url.hostname,
+      path: url.pathname + url.search,
+      port: 443,
+      key,
+      cert,
+      passphrase,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(payload),
+      },
+    };
+
+    const merchantSession = await new Promise((resolve, reject) => {
+      const request = https.request(options, (response) => {
+        let data = "";
+        response.setEncoding("utf8");
+        response.on("data", (chunk) => (data += chunk));
+        response.on("end", () => {
+          try {
+            const json = JSON.parse(data || "{}");
+            if (response.statusCode >= 200 && response.statusCode < 300) {
+              resolve(json);
+            } else {
+              reject(new Error(`Apple returned ${response.statusCode}: ${data}`));
+            }
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+      request.on("error", reject);
+      request.write(payload);
+      request.end();
+    });
+
+    return res.status(200).json(merchantSession);
+  } catch (err) {
+    console.error("apple-session error", err);
+    return res.status(500).json({ error: "Merchant validation failed" });
+  }
+}
