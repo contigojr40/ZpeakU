@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ZpeakU • Test Apple Pay</title>
+</head>
+<body>
+  <h1>Test Apple Pay</h1>
+  <button id="btn">Probar Apple Pay (2.99)</button>
+
+  <script>
+    document.getElementById("btn").addEventListener("click", async () => {
+      try {
+        if (!window.ApplePaySession || !ApplePaySession.canMakePayments()) {
+          alert("Apple Pay no disponible en este dispositivo/navegador.");
+          return;
+        }
+
+        const paymentRequest = {
+          countryCode: "US",
+          currencyCode: "USD",
+          total: { label: "ZpeakU", amount: "2.99" },
+          supportedNetworks: ["amex","discover","masterCard","visa"],
+          merchantCapabilities: ["supports3DS"]
+        };
+
+        const session = new ApplePaySession(6, paymentRequest);
+
+        session.onvalidatemerchant = async (event) => {
+          const resp = await fetch("/api/apple-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ validationURL: event.validationURL })
+          });
+          const merchantSession = await resp.json();
+          session.completeMerchantValidation(merchantSession);
+        };
+
+        // En esta prueba cancelamos después de mostrar el sheet
+        session.oncancel = () => console.log("Usuario canceló (test).");
+
+        session.begin();
+      } catch (e) {
+        console.error(e);
+        alert("Error en el test. Revisa la consola.");
+      }
+    });
+  </script>
+</body>
+</html>
