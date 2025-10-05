@@ -72,8 +72,10 @@ function applyI18n(){
     const norm = ALIAS[key] || key;
     if (t[norm]) a.textContent = t[norm];
   });
-  $("a.pill.primary")  && ($("a.pill.primary").textContent  = t.subFan);
-  $("a.pill.outline")  && ($("a.pill.outline").textContent  = t.subCreator);
+  // Nota: en index.html estamos usando <button>s, no <a> con clase .pill, 
+  // por eso nos basaremos en los IDs, pero mantengo el código .pill por si lo usas después.
+  $("#btn-fan")  && ($("#btn-fan").textContent  = t.subFan);
+  $("#btn-creator")  && ($("#btn-creator").textContent  = t.subCreator);
   $("#btnExportData")  && ($("#btnExportData").textContent  = t.export);
   $("#btnDeleteAccount") && ($("#btnDeleteAccount").textContent = t.delete);
 }
@@ -99,7 +101,7 @@ $("#playerModal")?.addEventListener("click",(e)=>{
 $("#pmDonate")?.addEventListener("click",()=> $("#donateModal")?.classList.remove("hidden"));
 $("#donClose")?.addEventListener("click",()=> $("#donateModal")?.classList.add("hidden"));
 
-// ===== Account Center =====
+// ===== Account Center (Funcionalidad avanzada) =====
 $("#btnExportData")?.addEventListener("click", async ()=>{
   try {
     const token = supabase ? (await supabase.auth.getSession())?.data?.session?.access_token : null;
@@ -131,7 +133,7 @@ $("#btnDeleteAccount")?.addEventListener("click", async ()=>{
   }
 });
 
-// ===== Suscripciones (Fan / Creador) =====
+// ===== Suscripciones (Fan / Creador) - Lógica de backend =====
 async function postSubscribe(kind){
   const res = await fetch("/api/subscribe", {
     method:"POST",
@@ -144,31 +146,7 @@ async function postSubscribe(kind){
   return data;
 }
 
-// Handlers por ID (tus botones visibles)
-$("#btn-fan")?.addEventListener("click", async (e)=>{
-  e.preventDefault();
-  try { await postSubscribe("fan"); } catch(err){ alert("No se pudo suscribir como Fan"); console.error(err); }
-});
-$("#btn-creator")?.addEventListener("click", async (e)=>{
-  e.preventDefault();
-  try { await postSubscribe("creator"); } catch(err){ alert("No se pudo iniciar el onboarding de Creador"); console.error(err); }
-});
-
-// Handlers por clase (si también existen .pill)
-$$("a.pill.primary").forEach(btn=>{
-  btn.addEventListener("click", async e=>{
-    e.preventDefault();
-    try { await postSubscribe("fan"); } catch(err){ alert("No se pudo suscribir como Fan"); console.error(err); }
-  });
-});
-$$("a.pill.outline").forEach(btn=>{
-  btn.addEventListener("click", async e=>{
-    e.preventDefault();
-    try { await postSubscribe("creator"); } catch(err){ alert("No se pudo iniciar el onboarding de Creador"); console.error(err); }
-  });
-});
-
-// ===== UI básicos =====
+// ===== UI básicos (funcionalidad de la app) =====
 function bindUI(){
   $("#btnTheme")?.addEventListener("click", ()=>{
     setTheme(document.body.getAttribute("data-theme") === "dark" ? "light" : "dark");
@@ -179,7 +157,9 @@ function bindUI(){
   });
 }
 
-// ===== Init =====
+// ==================================================
+//               FIX DE EJECUCIÓN: INIT
+// ==================================================
 document.addEventListener("DOMContentLoaded", ()=>{
   log("main.js cargado ✅");
   setTheme(store.get("theme","dark"));
@@ -187,4 +167,43 @@ document.addEventListener("DOMContentLoaded", ()=>{
   handleHash();
   window.addEventListener("hashchange", handleHash);
   bindUI();
+
+  // FIX: Conexión de botones movida AQUÍ para garantizar que existen en el DOM
+  // Handlers por ID (tus botones visibles de Suscripción)
+  $("#btn-fan")?.addEventListener("click", async (e)=>{
+    e.preventDefault();
+    try { 
+      // Si quieres probar si funciona sin el backend: log("CLICK: FAN");
+      await postSubscribe("fan"); 
+    } catch(err){ 
+      alert("No se pudo suscribir como Fan. Revisa la consola para ver el error del /api/subscribe."); 
+      console.error(err); 
+    }
+  });
+
+  $("#btn-creator")?.addEventListener("click", async (e)=>{
+    e.preventDefault();
+    try { 
+      // Si quieres probar si funciona sin el backend: log("CLICK: CREADOR");
+      await postSubscribe("creator"); 
+    } catch(err){ 
+      alert("No se pudo iniciar el onboarding de Creador. Revisa la consola para ver el error del /api/subscribe."); 
+      console.error(err); 
+    }
+  });
+
+  // Handlers por clase (si también existen .pill, los mantengo por precaución)
+  $$("a.pill.primary").forEach(btn=>{
+    btn.addEventListener("click", async e=>{
+      e.preventDefault();
+      try { await postSubscribe("fan"); } catch(err){ alert("No se pudo suscribir como Fan"); console.error(err); }
+    });
+  });
+  $$("a.pill.outline").forEach(btn=>{
+    btn.addEventListener("click", async e=>{
+      e.preventDefault();
+      try { await postSubscribe("creator"); } catch(err){ alert("No se pudo iniciar el onboarding de Creador"); console.error(err); }
+    });
+  });
+  // FIN DEL FIX
 });
