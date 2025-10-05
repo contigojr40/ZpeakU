@@ -1,8 +1,21 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/.well-known/apple-developer-merchantid-domain-association.txt",
-      "destination": "/api/apple-verify"
+      "src": "public/**/*",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "public"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/.well-known/apple-developer-merchantid-domain-association.txt",
+      "dest": "/api/apple-verify"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 }
