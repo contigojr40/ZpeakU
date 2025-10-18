@@ -4,7 +4,8 @@
   "description": "ZPEAKU™ LEGACY - Plataforma de Verdad Comunitaria",
   "type": "module",
   "scripts": {
-    "dev": "vercel dev",
+    "start": "vercel dev",
+    "dev": "npm run start",
     "deploy:prod": "vercel --prod",
     "db:start": "supabase start",
     "db:reset": "supabase db reset"

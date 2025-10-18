@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZPEAKU™ - Email Code</title>
+    <link rel="stylesheet" href="../styles/tokens.css">
+    <link rel="stylesheet" href="../styles/base.css">
+</head>
+<body class="z-theme-light">
+    <main class="auth-container">
+        <h2 class="logo-text">Verificación por Email</h2>
+        
+        <form id="auth-form">
+            <div id="stage-email">
+                <p>Ingresa tu correo electrónico para recibir tu código de acceso.</p>
+                <input type="email" id="email" placeholder="ejemplo@email.com" required class="input-field">
+                <button type="submit" class="button button-primary">Enviar Código</button>
+            </div>
+            
+            <div id="stage-code" style="display: none;">
+                <p>Ingresa el código de 6 dígitos que enviamos a <span id="display-email" class="font-bold"></span>.</p>
+                <input type="text" id="code" placeholder="123456" required class="input-field" maxlength="6">
+                <button type="submit" class="button button-secondary">Verificar Acceso</button>
+                <button type="button" id="resend-btn" class="button button-link mt-2">Reenviar Código</button>
+            </div>
+
+            <p id="message" class="error-text mt-3" style="display: none;"></p>
+        </form>
+        
+        <a href="/onboarding.html" class="mt-4 button button-link">← Volver</a>
+    </main>
+
+    <script type="module" src="../lib/i18n.js"></script>
+    <script type="module">
+        import { supa } from '../lib/supa.js';
+
+        const emailInput = document.getElementById('email');
+        const codeInput = document.getElementById('code');
+        const displayEmail = document.getElementById('display-email');
+        const authForm = document.getElementById('auth-form');
+        const stageEmail = document.getElementById('stage-email');
+        const stageCode = document.getElementById('stage-code');
+        const messageElement = document.getElementById('message');
+        const resendBtn = document.getElementById('resend-btn');
+
+        let currentEmail = '';
+
+        function showMessage(text, isError = false) {
+            messageElement.textContent = text;
+            messageElement.style.color = isError ? 'var(--color-danger)' : 'var(--color-success)';
+            messageElement.style.display = 'block';
+        }
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            messageElement.style.display = 'none';
+
+            if (stageEmail.style.display !== 'none') {
+                // ETAPA 1: Enviar Email (Sign In con OTP)
+                currentEmail = emailInput.value.trim();
+                if (!currentEmail) return;
+
+                const { error } = await supa.auth.signInWithOtp({ 
+                    email: currentEmail,
+                    options: { 
+                        emailRedirectTo: `${window.location.origin}/welcome.html` 
+                    } 
+                });
+
+                if (error) {
+                    showMessage(error.message, true);
+                } else {
+                    displayEmail.textContent = currentEmail;
+                    stageEmail.style.display = 'none';
+                    stageCode.style.display = 'block';
+                    showMessage('¡Código enviado! Revisa tu bandeja de entrada o spam.', false);
+                }
+
+            } else {
+                // ETAPA 2: Verificar Código (Verify OTP)
+                const code = codeInput.value.trim();
+                if (!code) return;
+
+                const { error } = await supa.auth.verifyOtp({ 
+                    email: currentEmail, 
+                    token: code,
+                    type: 'email'
+                });
+
+                if (error) {
+                    showMessage(error.message, true);
+                } else {
+                    // Redirigir a la página de bienvenida tras verificación exitosa
+                    window.location.href = '/welcome.html';
+                }
+            }
+        });
+
+        resendBtn.addEventListener('click', async () => {
+             // Solo si estamos en la etapa de código
+            if (stageCode.style.display !== 'none' && currentEmail) {
+                showMessage('Reenviando código...', false);
+                
+                const { error } = await supa.auth.signInWithOtp({ 
+                    email: currentEmail,
+                    options: { 
+                        emailRedirectTo: `${window.location.origin}/welcome.html` 
+                    } 
+                });
+
+                if (error) {
+                    showMessage(error.message, true);
+                } else {
+                    showMessage('¡Código reenviado! Revisa tu bandeja.', false);
+                }
+            }
+        });
+
+        // Opcional: Redirección inmediata si el usuario ya está autenticado
+        supa.auth.getSession().then(({ data }) => {
+            if (data.session) {
+                window.location.href = '/';
+            }
+        });
+    </script>
+</body>
+</html>

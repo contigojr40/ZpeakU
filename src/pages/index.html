@@ -1,97 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZpeakU</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-    header, footer {
-      background: #111;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-    }
-    nav a {
-      color: #fff;
-      margin: 0 10px;
-      text-decoration: none;
-    }
-    main {
-      text-align: center;
-      margin: 40px auto;
-      max-width: 900px;
-    }
-    .cta-row {
-      margin-top: 20px;
-    }
-    button {
-      margin: 10px;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      color: #fff;
-    }
-    .btn-fan {
-      background: #6f42c1;
-    }
-    .btn-creator {
-      background: #d63384;
-    }
-    footer small {
-      color: #bbb;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZPEAKU™</title>
+    <link rel="stylesheet" href="../styles/tokens.css">
+    <link rel="stylesheet" href="../styles/base.css">
+    <link rel="stylesheet" href="../styles/embed.css">
 </head>
-<body>
-  <header>
-    <h1>✨ Bienvenidos a ZpeakU</h1>
-    <nav>
-      <a href="#inicio">Inicio</a>
-      <a href="#transmision">Transmisión</a>
-      <a href="#fans">Fans</a>
-      <a href="#creador">Creador</a>
-      <a href="#soporte">Soporte</a>
-      <a id="btn-login" href="#">Iniciar sesión</a>
-    </nav>
-  </header>
+<body class="z-theme-light">
+    <main id="app-container" style="display: none;">
+        <h1 class="logo-text">ZPEAKU™ Feed</h1>
+        <p>Bienvenido. Carga del contenido universal en curso...</p>
 
-  <main id="inicio">
-    <h2>La plataforma puente entre Fans y Creadores</h2>
-    <div class="cta-row">
-      <button id="btn-fan" class="btn-fan">🟣 Suscribirme como Fan</button>
-      <button id="btn-creator" class="btn-creator">🟣 Suscribirme como Creador</button>
-    </div>
+        <button id="logout-btn" class="button button-danger">Cerrar Sesión (Temporal)</button>
+        
+        </main>
 
-    <section>
-      <h3>Shorts gratis de la comunidad</h3>
-      <!-- Aquí van tus videos embebidos de YouTube -->
-    </section>
-    <section>
-      <h3>Videos públicos de la comunidad</h3>
-      <!-- Aquí van tus embeds -->
-    </section>
-  </main>
+    <script type="module" src="../lib/i18n.js"></script>
+    <script type="module">
+        import { supa } from '../lib/supa.js';
 
-  <footer>
-    <nav>
-      <a href="#soporte">Soporte</a>
-      <a href="#">Términos</a>
-      <a href="#">Privacidad</a>
-      <a href="#">DMCA</a>
-    </nav>
-    <small>© 2025 ZpeakU</small>
-  </footer>
+        // Lógica de Gating y Redirección de Sesión
+        supa.auth.getSession().then(({ data }) => {
+            if (!data.session) {
+                // No hay sesión, redirigir a Onboarding
+                console.log("Sesión no encontrada. Redirigiendo a onboarding.");
+                window.location.href = '/onboarding.html';
+            } else {
+                // Sesión activa, mostrar la aplicación
+                console.log("Sesión activa para usuario:", data.session.user.id);
+                document.getElementById('app-container').style.display = 'block';
+                // Aquí iría la inicialización del Feed de Shorts (Bloque 3)
+            }
+        });
 
-  <!-- Carga correcta del script -->
-  <script defer src="./main.js"></script>
+        // Lógica de Cierre de Sesión (Temporal)
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            const { error } = await supa.auth.signOut();
+            if (!error) {
+                window.location.href = '/onboarding.html';
+            } else {
+                console.error("Error al cerrar sesión:", error.message);
+                alert("Error al cerrar sesión: " + error.message);
+            }
+        });
+        
+        // La lógica de la función t() de i18n se encargará de traducir textos si es necesario
+    </script>
 </body>
 </html>
