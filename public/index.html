@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZPEAKU™</title>
-    <link rel="stylesheet" href="../styles/tokens.css">
-    <link rel="stylesheet" href="../styles/base.css">
-    <link rel="stylesheet" href="../styles/embed.css">
+    <link rel="stylesheet" href="/styles/tokens.css">
+    <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/embed.css">
 </head>
 <body class="z-theme-light">
     <main id="app-container" style="display: none;">
@@ -17,16 +17,17 @@
         
         </main>
 
-    <script type="module" src="../lib/i18n.js"></script>
+    <script type="module" src="/lib/i18n.js"></script>
     <script type="module">
-        import { supa } from '../lib/supa.js';
+        import { supa } from '/lib/supa.js'; // RUTA CORREGIDA
 
         // Lógica de Gating y Redirección de Sesión
         supa.auth.getSession().then(({ data }) => {
             if (!data.session) {
                 // No hay sesión, redirigir a Onboarding
                 console.log("Sesión no encontrada. Redirigiendo a onboarding.");
-                window.location.href = '/onboarding.html';
+                // Asumiendo que /onboarding.html también está en /public/
+                window.location.href = '/onboarding.html'; 
             } else {
                 // Sesión activa, mostrar la aplicación
                 console.log("Sesión activa para usuario:", data.session.user.id);
