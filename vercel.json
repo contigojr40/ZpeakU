@@ -29,20 +29,28 @@
       "destination": "/src/pages/index.html"
     },
     {
-      "source": "/src/pages/(.*)",
-      "destination": "/src/pages/$1"
+      "source": "/onboarding",
+      "destination": "/src/pages/onboarding.html"
     },
     {
-      "source": "/src/styles/(.*)",
+      "source": "/health",
+      "destination": "/src/pages/health_page.html"
+    },
+    {
+      "source": "/styles/(.*)",
       "destination": "/src/styles/$1"
     },
     {
-      "source": "/src/lib/(.*)",
+      "source": "/lib/(.*)",
       "destination": "/src/lib/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/$1"
+      "source": "/assets/(.*)",
+      "destination": "/public/assets/$1"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
   ],
   "builds": [
