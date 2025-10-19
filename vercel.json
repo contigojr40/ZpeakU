@@ -25,10 +25,6 @@
   ],
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/src/pages/index.html"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
