@@ -25,6 +25,26 @@
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/src/pages/index.html"
+    },
+    {
+      "source": "/onboarding",
+      "destination": "/src/pages/onboarding.html"
+    },
+    {
+      "source": "/health",
+      "destination": "/src/pages/health_page.html"
+    },
+    {
+      "source": "/(styles|lib)/(.*)",
+      "destination": "/src/$1/$2"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/public/assets/$1"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
