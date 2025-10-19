@@ -15,5 +15,8 @@
     "supabase": "^1.150.0",
     "vercel": "^32.0.0"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "author": "Jorge Elio Ricardo Sarmiento"
 }
