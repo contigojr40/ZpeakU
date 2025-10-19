@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZPEAKU™ - ¡Bienvenido!</title>
-    <link rel="stylesheet" href="../styles/tokens.css">
-    <link rel="stylesheet" href="../styles/base.css">
+    <link rel="stylesheet" href="/styles/tokens.css">
+    <link rel="stylesheet" href="/styles/base.css">
 </head>
 <body class="z-theme-light">
     <main class="welcome-container">
@@ -22,9 +22,9 @@
 
     </main>
 
-    <script type="module" src="../lib/i18n.js"></script>
+    <script type="module" src="/lib/i18n.js"></script>
     <script type="module">
-        import { supa } from '../lib/supa.js';
+        import { supa } from '/lib/supa.js';
 
         // Lógica: Esperar unos segundos y redirigir al feed principal
         setTimeout(() => {
@@ -35,8 +35,8 @@
         // Verificar que la sesión es válida (aunque Supabase ya lo hizo)
         supa.auth.getSession().then(({ data }) => {
             if (!data.session) {
-                // Si por alguna razón no hay sesión, regresamos al onboarding
-                window.location.href = '/onboarding.html';
+                // Si por alguna razón no hay sesión, regresamos a la página de bienvenida (que ahora es index.html)
+                window.location.href = '/';
             }
         });
     </script>
