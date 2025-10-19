@@ -16,11 +16,44 @@
   ],
   "crons": [
     { "path": "/api/cron/video-status", "schedule": "0 3 * * *" },
-    { "path": "/api/cron/refresh-mv-shorts", "schedule": "*/10 * * * *" },
     { "path": "/api/chat/expire", "schedule": "*/15 * * * *" },
     { "path": "/api/cron/purge-comments", "schedule": "0 */6 * * *" },
     { "path": "/api/cron/recompute-verification", "schedule": "30 4 * * *" },
     { "path": "/api/ai/sample-triage", "schedule": "*/10 * * * *" },
-    { "path": "/api/cron/iap-revalidate", "schedule": "0 */6 * * *" }
+    { "path": "/api/cron/iap-revalidate", "schedule": "0 */6 * * *" },
+    { "path": "/api/cron/refresh-mv-shorts", "schedule": "*/10 * * * *" }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/src/pages/index.html"
+    },
+    {
+      "source": "/src/pages/(.*)",
+      "destination": "/src/pages/$1"
+    },
+    {
+      "source": "/src/styles/(.*)",
+      "destination": "/src/styles/$1"
+    },
+    {
+      "source": "/src/lib/(.*)",
+      "destination": "/src/lib/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ],
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node@3.0.17",
+      "config": {
+        "externalDependencies": [
+          "@supabase/supabase-js"
+        ]
+      }
+    }
   ]
 }

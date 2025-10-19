@@ -36,3 +36,4 @@ supabase/.temp/
 supabase/db/dumps/
 supabase/functions/.dist/
 supabase/functions/node_modules/
+.vercel
