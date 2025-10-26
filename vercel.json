@@ -1,6 +1,7 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+
   "headers": [
     {
       "source": "/(.*)",
@@ -16,6 +17,7 @@
       ]
     }
   ],
+
   "crons": [
     { "path": "/api/cron/video-status", "schedule": "0 3 * * *" },
     { "path": "/api/chat/expire", "schedule": "*/15 * * * *" },
@@ -25,10 +27,11 @@
     { "path": "/api/cron/iap-revalidate", "schedule": "0 */6 * * *" },
     { "path": "/api/cron/refresh-mv-shorts", "schedule": "*/10 * * * *" }
   ],
+
   "rewrites": [
     {
       "source": "/",
-      "destination": "/public/index.html"
+      "destination": "/index.html"
     },
     {
       "source": "/onboarding",
