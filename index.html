@@ -1,45 +1,94 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZPEAKU™</title>
-    <link rel="stylesheet" href="/styles/tokens.css">
-    <link rel="stylesheet" href="/styles/base.css">
-    <link rel="stylesheet" href="/styles/embed.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZPEAKU™</title>
+  <link rel="stylesheet" href="/styles/tokens.css">
+  <link rel="stylesheet" href="/styles/base.css">
+  <link rel="stylesheet" href="/styles/embed.css">
+  <style>
+    body {
+      background-color: #0D0717;
+      color: #EDEDED;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1.logo-text {
+      color: #7C3AED;
+      font-size: 2.5rem;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+    p {
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #DC2626;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #B91C1C;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
+
 <body class="z-theme-light">
-    <main id="app-container" style="display: none;">
-        <h1 class="logo-text">ZPEAKU™ Feed</h1>
-        <p>Bienvenido. Carga del contenido universal en curso...</p>
+  <main id="app-container" style="display:none; text-align:center;">
+    <h1 class="logo-text">ZPEAKU™ Feed</h1>
+    <p>Bienvenido. Carga del contenido universal en curso...</p>
+    <button id="logout-btn" class="button button-danger">Cerrar Sesión (Temporal)</button>
+  </main>
 
-        <button id="logout-btn" class="button button-danger">Cerrar Sesión (Temporal)</button>
-        
-        </main>
+  <script type="module">
+    import { supa } from '/lib/supa.js';
 
-    <script type="module" src="/lib/i18n.js"></script>
-    <script type="module">
-        import { supa } from '/lib/supa.js';
+    async function verificarSesion() {
+      const { data, error } = await supa.auth.getSession();
+      if (error) {
+        console.error("Error verificando sesión:", error.message);
+        alert("Error verificando sesión: " + error.message);
+        return;
+      }
 
-        supa.auth.getSession().then(({ data }) => {
-            if (!data.session) {
-                console.log("Sesión no encontrada. Redirigiendo a welcome.");
-                window.location.href = '/welcome.html'; 
-            } else {
-                console.log("Sesión activa para usuario:", data.session.user.id);
-                document.getElementById('app-container').style.display = 'block';
-            }
-        });
+      if (!data.session) {
+        console.log("Sesión no encontrada. Redirigiendo a bienvenida...");
+        window.location.href = '/welcome.html';
+      } else {
+        console.log("Sesión activa para usuario:", data.session.user.id);
+        document.getElementById('app-container').style.display = 'block';
+      }
+    }
 
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            const { error } = await supa.auth.signOut();
-            if (!error) {
-                window.location.href = '/welcome.html';
-            } else {
-                console.error("Error al cerrar sesión:", error.message);
-                alert("Error al cerrar sesión: " + error.message);
-            }
-        });
-    </script>
+    async function cerrarSesion() {
+      const { error } = await supa.auth.signOut();
+      if (error) {
+        console.error("Error al cerrar sesión:", error.message);
+        alert("Error al cerrar sesión: " + error.message);
+      } else {
+        console.log("Sesión cerrada correctamente. Redirigiendo...");
+        window.location.href = '/welcome.html';
+      }
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', cerrarSesion);
+    verificarSesion();
+  </script>
 </body>
 </html>
