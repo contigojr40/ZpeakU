@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZPEAKU™</title>
+    <link rel="stylesheet" href="/styles/tokens.css">
+    <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/embed.css">
+</head>
+<body class="z-theme-light">
+    <main id="app-container" style="display: none;">
+        <h1 class="logo-text">ZPEAKU™ Feed</h1>
+        <p>Bienvenido. Carga del contenido universal en curso...</p>
+
+        <button id="logout-btn" class="button button-danger">Cerrar Sesión (Temporal)</button>
+        
+        </main>
+
+    <script type="module" src="/lib/i18n.js"></script>
+    <script type="module">
+        import { supa } from '/lib/supa.js';
+
+        supa.auth.getSession().then(({ data }) => {
+            if (!data.session) {
+                console.log("Sesión no encontrada. Redirigiendo a welcome.");
+                window.location.href = '/welcome.html'; 
+            } else {
+                console.log("Sesión activa para usuario:", data.session.user.id);
+                document.getElementById('app-container').style.display = 'block';
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            const { error } = await supa.auth.signOut();
+            if (!error) {
+                window.location.href = '/welcome.html';
+            } else {
+                console.error("Error al cerrar sesión:", error.message);
+                alert("Error al cerrar sesión: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
