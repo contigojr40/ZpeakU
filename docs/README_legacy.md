@@ -1,2 +1,1 @@
-# ZpeakU
-Repositorio oficial del proyecto ZpeakU (MVP → Escalabilidad
+ZPEAKU™ LEGACY v16.1 — estructura limpia preparada para producción.

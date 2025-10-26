@@ -1,0 +1,1 @@
+export function zping(kind="ok"){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type="sine";o.frequency.value={ok:420,warn:260,err:180,info:340}[kind]||420;g.gain.value=.05;o.start();o.stop(c.currentTime+.12);}catch{}}
