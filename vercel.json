@@ -42,16 +42,18 @@
       "destination": "/src/pages/health_page.html"
     },
     {
-      "source": "/(styles|lib|pages)/(.*)",
-      "destination": "/src/$1/$2"
+      "source": "/welcome",
+      "destination": "/welcome.html"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/public/assets/$1"
+      "source": "/src/(.*)",
+      "destination": "/src/$1"
     },
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
-  ]
+  ],
+
+  "public": "src"
 }
