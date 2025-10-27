@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZPEAKU™</title>
-  <link rel="stylesheet" href="/styles/tokens.css">
-  <link rel="stylesheet" href="/styles/base.css">
-  <link rel="stylesheet" href="/styles/embed.css">
+
+  <!-- ✅ Rutas corregidas -->
+  <link rel="stylesheet" href="/src/styles/base.css" />
+  <link rel="stylesheet" href="/src/styles/v16-ux.css" />
+
   <style>
     body {
       background-color: #0D0717;
@@ -18,6 +20,7 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      text-align: center;
     }
     h1.logo-text {
       color: #7C3AED;
@@ -50,28 +53,39 @@
 </head>
 
 <body class="z-theme-light">
-  <main id="app-container" style="display:none; text-align:center;">
+  <main id="app-container" style="display:none;">
     <h1 class="logo-text">ZPEAKU™ Feed</h1>
     <p>Bienvenido. Carga del contenido universal en curso...</p>
     <button id="logout-btn" class="button button-danger">Cerrar Sesión (Temporal)</button>
   </main>
 
+  <!-- ✅ Scripts reales y rutas correctas -->
+  <script type="module" src="/src/lib/supa.js"></script>
+  <script type="module" src="/src/lib/v16-toast.js"></script>
+  <script type="module" src="/src/lib/v16-sfx.js"></script>
+
   <script type="module">
-    import { supa } from '/lib/supa.js';
+    import { supa } from '/src/lib/supa.js';
 
     async function verificarSesion() {
-      const { data, error } = await supa.auth.getSession();
-      if (error) {
-        console.error("Error verificando sesión:", error.message);
-        alert("Error verificando sesión: " + error.message);
-        return;
-      }
+      try {
+        const { data, error } = await supa.auth.getSession();
+        if (error) {
+          console.error("Error verificando sesión:", error.message);
+          alert("Error verificando sesión: " + error.message);
+          document.getElementById('app-container').style.display = 'block';
+          return;
+        }
 
-      if (!data.session) {
-        console.log("Sesión no encontrada. Redirigiendo a bienvenida...");
-        window.location.href = '/welcome.html';
-      } else {
-        console.log("Sesión activa para usuario:", data.session.user.id);
+        if (!data.session) {
+          console.log("Sesión no encontrada. Redirigiendo a bienvenida...");
+          window.location.href = '/welcome.html';
+        } else {
+          console.log("✅ Sesión activa para usuario:", data.session.user.id);
+          document.getElementById('app-container').style.display = 'block';
+        }
+      } catch (err) {
+        console.error("Error inesperado:", err);
         document.getElementById('app-container').style.display = 'block';
       }
     }
