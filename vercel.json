@@ -1,7 +1,4 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-
   "headers": [
     {
       "source": "/(.*)",
@@ -10,50 +7,14 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
         { "key": "Permissions-Policy", "value": "accelerometer=(), geolocation=(), camera=(), microphone=()" },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; img-src 'self' https: data:; media-src 'none'; frame-src https://www.youtube-nocookie.com https://www.facebook.com https://www.instagram.com https://www.tiktok.com; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.instagram.com https://www.tiktok.com; style-src 'self' 'unsafe-inline';"
+        { "key": "Content-Security-Policy",
+          "value": "default-src 'self'; img-src 'self' https: data:; media-src https:; frame-src https://www.youtube.com https://www.facebook.com https://www.instagram.com https://www.tiktok.com; script-src 'self' https://www.youtube.com https://connect.facebook.net https://www.instagram.com https://www.tiktok.com 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
         }
       ]
     }
   ],
-
-  "crons": [
-    { "path": "/api/cron/video-status", "schedule": "0 3 * * *" },
-    { "path": "/api/chat/expire", "schedule": "*/15 * * * *" },
-    { "path": "/api/cron/purge-comments", "schedule": "0 */6 * * *" },
-    { "path": "/api/cron/recompute-verification", "schedule": "30 4 * * *" },
-    { "path": "/api/ai/sample-triage", "schedule": "*/10 * * * *" },
-    { "path": "/api/cron/iap-revalidate", "schedule": "0 */6 * * *" },
-    { "path": "/api/cron/refresh-mv-shorts", "schedule": "*/10 * * * *" }
-  ],
-
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/onboarding",
-      "destination": "/src/pages/onboarding.html"
-    },
-    {
-      "source": "/health",
-      "destination": "/src/pages/health_page.html"
-    },
-    {
-      "source": "/welcome",
-      "destination": "/welcome.html"
-    },
-    {
-      "source": "/src/(.*)",
-      "destination": "/src/$1"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
+    { "source": "/", "destination": "/public/index.html" }
   ],
-
-  "public": "src"
+  "compression": true
 }
