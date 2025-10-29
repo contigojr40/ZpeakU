@@ -32,6 +32,5 @@
       "destination": "/public/index.html"
     }
   ],
-  "compression": true,
   "public": "public"
 }
