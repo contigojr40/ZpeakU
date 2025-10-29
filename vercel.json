@@ -31,6 +31,5 @@
       "source": "/",
       "destination": "/public/index.html"
     }
-  ],
-  "public": "public"
+  ]
 }
