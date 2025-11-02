@@ -1,14 +1,17 @@
 {
-  "name": "zpeaku-clean",
+  "name": "zpeaku",
   "version": "1.0.0",
-  "description": "ZPEAKU™ LEGACY - Plataforma de Verdad Comunitaria",
+  "description": "ZPEAKU™ LEGACY — Plataforma de Verdad Comunitaria",
   "type": "module",
+  "private": true,
   "scripts": {
     "start": "vercel dev",
     "dev": "npm run start",
     "deploy:prod": "vercel --prod",
     "db:start": "supabase start",
-    "db:reset": "supabase db reset"
+    "db:reset": "supabase db reset",
+    "build": "echo '⚙️ Build local completado con npm'",
+    "vercel-build": "npm install && npm run build"
   },
   "dependencies": {},
   "devDependencies": {
@@ -16,7 +19,7 @@
     "vercel": "^32.0.0"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "author": "Jorge Elio Ricardo Sarmiento"
 }
