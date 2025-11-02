@@ -37,3 +37,7 @@ supabase/db/dumps/
 supabase/functions/.dist/
 supabase/functions/node_modules/
 .vercel
+
+# Local project map
+ZPEAKU_STRUCTURE.txt
+_AUDIT/
