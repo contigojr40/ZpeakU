@@ -79,7 +79,7 @@
 
         if (!data.session) {
           console.log("Sesión no encontrada. Redirigiendo a bienvenida...");
-          window.location.href = '/welcome.html';
+          console.log('sin sesión: permaneciendo en index.html');
         } else {
           console.log("✅ Sesión activa para usuario:", data.session.user.id);
           document.getElementById('app-container').style.display = 'block';
@@ -97,7 +97,7 @@
         alert("Error al cerrar sesión: " + error.message);
       } else {
         console.log("Sesión cerrada correctamente. Redirigiendo...");
-        window.location.href = '/welcome.html';
+        console.log('sin sesión: permaneciendo en index.html');
       }
     }
 
