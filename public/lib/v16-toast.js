@@ -1,0 +1,1 @@
+export function ztoast(msg, tone="ok", ms=2200){const el=document.createElement("div");el.className="z-toast";el.textContent=msg;document.body.appendChild(el);setTimeout(()=>{el.style.opacity=.0;el.style.transform="translateY(6px)";setTimeout(()=>el.remove(),300);},ms);}
