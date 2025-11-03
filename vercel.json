@@ -1,13 +1,13 @@
 {
   "headers": [
     {
-      "source": "/(.*)\.css",
+      "source": "/(.*)\\.css",
       "headers": [
         { "key": "Content-Type", "value": "text/css" }
       ]
     },
     {
-      "source": "/(.*)\.js",
+      "source": "/(.*)\\.js",
       "headers": [
         { "key": "Content-Type", "value": "application/javascript" }
       ]
