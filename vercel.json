@@ -3,17 +3,26 @@
     {
       "source": "/(.*)\\.css",
       "headers": [
-        { "key": "Content-Type", "value": "text/css" }
+        {
+          "key": "Content-Type",
+          "value": "text/css"
+        }
       ]
     },
     {
       "source": "/(.*)\\.js",
       "headers": [
-        { "key": "Content-Type", "value": "application/javascript" }
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
       ]
     }
   ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
