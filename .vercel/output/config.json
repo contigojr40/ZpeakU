@@ -1,8 +1,40 @@
 {
   "version": 3,
   "routes": [
-    { "src": "^/api/(.*)$", "dest": "/api/$1" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
+    {
+      "src": "^(?:/(.*))$",
+      "headers": {
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Permissions-Policy": "accelerometer=(), geolocation=(), camera=(), microphone=()",
+        "Content-Security-Policy": "default-src 'self'; img-src 'self' https: data:; media-src https:; frame-src https://www.youtube.com https://www.facebook.com https://www.instagram.com https://www.tiktok.com; script-src 'self' https://www.youtube.com https://connect.facebook.net https://www.instagram.com https://www.tiktok.com https://esm.sh https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/api(/.*)?$",
+      "status": 404
+    },
+    {
+      "handle": "error"
+    },
+    {
+      "status": 404,
+      "src": "^(?!/api).*$",
+      "dest": "/404.html"
+    },
+    {
+      "handle": "miss"
+    },
+    {
+      "src": "^/api/(.+)(?:\\.(?:js))$",
+      "dest": "/api/$1",
+      "check": true
+    }
+  ],
+  "crons": []
 }
