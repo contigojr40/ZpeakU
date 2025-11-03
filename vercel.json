@@ -1,5 +1,4 @@
 {
-  "framework": "other",
   "builds": [
     { "src": "public/**/*", "use": "@vercel/static" }
   ],
