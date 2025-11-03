@@ -1,3 +1,0 @@
-# Este archivo le indica a los robots de los motores de búsqueda que no indexen ninguna página de este sitio.
-User-agent: *
-Disallow: /
