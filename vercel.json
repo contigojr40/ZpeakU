@@ -3,22 +3,10 @@
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "accelerometer=(), geolocation=(), camera=(), microphone=()"
-        },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Permissions-Policy", "value": "accelerometer=(), geolocation=(), camera=(), microphone=()" },
         {
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; img-src 'self' https: data:; media-src https:; frame-src https://www.youtube.com https://www.facebook.com https://www.instagram.com https://www.tiktok.com; script-src 'self' https://www.youtube.com https://connect.facebook.net https://www.instagram.com https://www.tiktok.com https://esm.sh https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
@@ -29,7 +17,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/public/index.html"
+      "destination": "/index.html"
     }
   ]
 }
